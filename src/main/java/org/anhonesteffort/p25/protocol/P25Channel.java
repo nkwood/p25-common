@@ -91,14 +91,20 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   @Override
   public void onSourceStateChange(Long sampleRate, Double frequency) {
     synchronized (processChainLock) {
-      RateChangeFilter<ComplexNumber> resampling = FilterFactory.getCicResampler(
-          sampleRate, TARGET_RATE, MAX_RATE_DIFF
-      );
-      channelRate = (long) (sampleRate * resampling.getRateChange());
-      iqSampleQueue.clear();
+      Optional<RateChangeFilter<ComplexNumber>> resampling;
+
+      if (Math.abs(sampleRate - TARGET_RATE) > MAX_RATE_DIFF) {
+        resampling  = Optional.of(FilterFactory.getCicResampler(sampleRate, TARGET_RATE, MAX_RATE_DIFF));
+        channelRate = (long) (sampleRate * resampling.get().getRateChange());
+        log.info("interpolation: " + resampling.get().getInterpolation() + ", " +
+                 "decimation: "    + resampling.get().getDecimation());
+      } else {
+        resampling  = Optional.empty();
+        channelRate = sampleRate;
+        log.info("source rate is acceptable, no need to resample");
+      }
 
       log.info("source rate: " + sampleRate + ", channel rate: " + channelRate);
-      log.info("interpolation: " + resampling.getInterpolation() + ", decimation: " + resampling.getDecimation());
 
       freqTranslation   = new ComplexNumberFrequencyTranslatingFilter(sampleRate, frequency, spec.getCenterFrequency());
       baseband          = FilterFactory.getKaiserBessel(channelRate, PASSBAND_STOP, STOPBAND_START, ATTENUATION, 1f);
@@ -108,8 +114,13 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       QpskPolarSlicer slicer = new QpskPolarSlicer();
                       framer = new DataUnitFramer(Optional.of(cqpskDemodulation));
 
-      freqTranslation.addSink(resampling);
-      resampling.addSink(baseband);
+      if (resampling.isPresent()) {
+        freqTranslation.addSink(resampling.get());
+        resampling.get().addSink(baseband);
+      } else {
+        freqTranslation.addSink(baseband);
+      }
+
       baseband.addSink(gainControl);
       gainControl.addSink(cqpskDemodulation);
       cqpskDemodulation.addSink(slicer);
@@ -127,6 +138,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       );
 
       sinks.forEach(framer::addSink);
+      iqSampleQueue.clear();
     }
   }
 
