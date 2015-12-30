@@ -15,14 +15,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol;
+package org.anhonesteffort.p25;
 
 import org.anhonesteffort.dsp.ChannelSpec;
+import org.anhonesteffort.p25.P25Config;
 
 public class P25ChannelSpec extends ChannelSpec {
 
   public P25ChannelSpec(Double centerFrequency) {
-    super(centerFrequency, P25.CHANNEL_WIDTH, P25.SAMPLE_RATE);
+    super(centerFrequency, P25Config.CHANNEL_WIDTH, P25Config.SAMPLE_RATE);
   }
 
 }

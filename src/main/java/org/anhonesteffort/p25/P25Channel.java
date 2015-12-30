@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol;
+package org.anhonesteffort.p25;
 
 import org.anhonesteffort.dsp.ComplexNumber;
 import org.anhonesteffort.dsp.Sink;
@@ -52,17 +52,12 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     implements DynamicSink<Samples>, Supplier<List<ComplexNumber>>, Callable<Void>
 {
 
-  private static final Logger log            = LoggerFactory.getLogger(P25Channel.class);
-  private static final Long   TARGET_RATE    = P25.SAMPLE_RATE;
-  private static final Long   MAX_RATE_DIFF  = P25.MAX_RATE_DIFF;
-  private static final Long   SYMBOL_RATE    = P25.SYMBOL_RATE;
-  private static final Long   PASSBAND_STOP  = P25.PASSBAND_STOP;
-  private static final Long   STOPBAND_START = P25.STOPBAND_START;
-  private static final int    ATTENUATION    = 40;
+  private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
 
   private final Map<FilterType, List<DynamicSink<ComplexNumber>>> spies = new HashMap<>();
   private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue = new LinkedBlockingQueue<>(10);
   private final Object processChainLock = new Object();
+  private final P25Config config;
   private final P25ChannelSpec spec;
 
   private ComplexNumberFrequencyTranslatingFilter freqTranslation;
@@ -76,8 +71,9 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     TRANSLATION, BASEBAND, GAIN, DEMODULATION
   }
 
-  public P25Channel(P25ChannelSpec spec) {
-    this.spec = spec;
+  public P25Channel(P25Config config, P25ChannelSpec spec) {
+    this.config = config;
+    this.spec   = spec;
     spies.put(FilterType.TRANSLATION,  new LinkedList<>());
     spies.put(FilterType.BASEBAND,     new LinkedList<>());
     spies.put(FilterType.GAIN,         new LinkedList<>());
@@ -93,8 +89,8 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     synchronized (processChainLock) {
       Optional<RateChangeFilter<ComplexNumber>> resampling;
 
-      if (Math.abs(sampleRate - TARGET_RATE) > MAX_RATE_DIFF) {
-        resampling  = Optional.of(FilterFactory.getCicResampler(sampleRate, TARGET_RATE, MAX_RATE_DIFF));
+      if (Math.abs(sampleRate - P25Config.SAMPLE_RATE) > config.getMaxRateDiff()) {
+        resampling  = Optional.of(FilterFactory.getCicResampler(sampleRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
         channelRate = (long) (sampleRate * resampling.get().getRateChange());
         log.info("interpolation: " + resampling.get().getInterpolation() + ", " +
                  "decimation: "    + resampling.get().getDecimation());
@@ -107,9 +103,9 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       log.info("source rate: " + sampleRate + ", channel rate: " + channelRate);
 
       freqTranslation   = new ComplexNumberFrequencyTranslatingFilter(sampleRate, frequency, spec.getCenterFrequency());
-      baseband          = FilterFactory.getKaiserBessel(channelRate, PASSBAND_STOP, STOPBAND_START, ATTENUATION, 1f);
-      gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / SYMBOL_RATE));
-      cqpskDemodulation = new ComplexNumberCqpskDemodulator(channelRate, SYMBOL_RATE);
+      baseband          = FilterFactory.getKaiserBessel(channelRate, config.getPassbandStop(), config.getStopbandStart(), config.getAttenuation(), 1f);
+      gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / P25Config.SYMBOL_RATE));
+      cqpskDemodulation = new ComplexNumberCqpskDemodulator(channelRate, P25Config.SYMBOL_RATE);
 
       QpskPolarSlicer slicer = new QpskPolarSlicer();
                       framer = new DataUnitFramer(Optional.of(cqpskDemodulation));

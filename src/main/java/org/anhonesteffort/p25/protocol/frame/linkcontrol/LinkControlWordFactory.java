@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame.linkcontrol;
 
-import org.anhonesteffort.p25.protocol.P25;
+import org.anhonesteffort.p25.P25Config;
 
 public class LinkControlWordFactory {
 
@@ -27,10 +27,10 @@ public class LinkControlWordFactory {
     int     linkControlOpcode = ((hexBits12[0] & 0x0F) << 2) + (hexBits12[1] >> 4);
 
     switch (linkControlOpcode) {
-      case P25.LCO_GROUP_VOICE_USER:
+      case P25Config.LCO_GROUP_VOICE_USER:
         return new GroupVoiceUserLwc(hexBits12, protectedFlag, implicitMfid, linkControlOpcode);
 
-      case P25.LCO_UNIT_TO_UNIT_USER:
+      case P25Config.LCO_UNIT_TO_UNIT_USER:
         return new UnitToUnitVoiceUserLwc(hexBits12, protectedFlag, implicitMfid, linkControlOpcode);
 
       default:

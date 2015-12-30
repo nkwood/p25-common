@@ -1,3 +1,6 @@
+*\.properties*
+!example-p25.properties
+
 target/
 .idea/
 

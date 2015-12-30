@@ -24,7 +24,7 @@ import org.anhonesteffort.p25.filter.gate.DiBitSyncGate;
 import org.anhonesteffort.p25.filter.gate.SyncGateSink;
 import org.anhonesteffort.p25.protocol.DiBit;
 import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
-import org.anhonesteffort.p25.protocol.P25;
+import org.anhonesteffort.p25.P25Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,16 +50,16 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
     this.cqpsk = cqpsk;
 
     if (!cqpsk.isPresent()) {
-      DiBitSyncGate syncGate = new DiBitSyncGate(P25.SYNC0DEG, P25.SYNC_BIT_LENGTH, 0);
+      DiBitSyncGate syncGate = new DiBitSyncGate(P25Config.SYNC0DEG, P25Config.SYNC_BIT_LENGTH, 0);
       Framer        framer   = new Framer(syncGate);
 
       syncGate.addSink(framer);
       syncGates.add(syncGate);
     } else {
-      DiBitSyncGate syncGate0   = new DiBitSyncGate(P25.SYNC0DEG,   P25.SYNC_BIT_LENGTH, 0);
-      DiBitSyncGate syncGate90  = new DiBitSyncGate(P25.SYNC90DEG,  P25.SYNC_BIT_LENGTH, 0);
-      DiBitSyncGate syncGate180 = new DiBitSyncGate(P25.SYNC180DEG, P25.SYNC_BIT_LENGTH, 0);
-      DiBitSyncGate syncGate270 = new DiBitSyncGate(P25.SYNC270DEG, P25.SYNC_BIT_LENGTH, 0);
+      DiBitSyncGate syncGate0   = new DiBitSyncGate(P25Config.SYNC0DEG,   P25Config.SYNC_BIT_LENGTH, 0);
+      DiBitSyncGate syncGate90  = new DiBitSyncGate(P25Config.SYNC90DEG,  P25Config.SYNC_BIT_LENGTH, 0);
+      DiBitSyncGate syncGate180 = new DiBitSyncGate(P25Config.SYNC180DEG, P25Config.SYNC_BIT_LENGTH, 0);
+      DiBitSyncGate syncGate270 = new DiBitSyncGate(P25Config.SYNC270DEG, P25Config.SYNC_BIT_LENGTH, 0);
       Framer        framer0     = new Framer(syncGate0);
       Framer        framer90    = new Framer(syncGate90);
       Framer        framer180   = new Framer(syncGate180);
@@ -93,18 +93,18 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
       log.debug("on sync consumed: " + syncCount);
 
     if (!cqpskSyncGates.isEmpty()) {
-      if (sourceGate.getSync() == P25.SYNC90DEG)
+      if (sourceGate.getSync() == P25Config.SYNC90DEG)
         cqpsk.get().correctPhaseError(90f);
-      else if (sourceGate.getSync() == P25.SYNC180DEG)
+      else if (sourceGate.getSync() == P25Config.SYNC180DEG)
         cqpsk.get().correctPhaseError(180f);
-      else if (sourceGate.getSync() == P25.SYNC270DEG)
+      else if (sourceGate.getSync() == P25Config.SYNC270DEG)
         cqpsk.get().correctPhaseError(270f);
 
       cqpskSyncGates.clear();
       syncGates.add(sourceGate);
     }
 
-    DiBitSyncGate syncGate = new DiBitSyncGate(P25.SYNC0DEG, P25.SYNC_BIT_LENGTH, SYNC_HAMMING_DISTANCE);
+    DiBitSyncGate syncGate = new DiBitSyncGate(P25Config.SYNC0DEG, P25Config.SYNC_BIT_LENGTH, SYNC_HAMMING_DISTANCE);
     Framer        framer   = new Framer(syncGate);
 
     syncGate.addSink(framer);
@@ -154,7 +154,7 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
 
   private class Framer implements SyncGateSink<DiBit> {
 
-    private final DiBitByteBufferSink nidSink = new DiBitByteBufferSink(P25.NID_LENGTH);
+    private final DiBitByteBufferSink nidSink = new DiBitByteBufferSink(P25Config.NID_LENGTH);
     private final DiBitSyncGate       syncGate;
 
     private DataUnit dataUnit;
