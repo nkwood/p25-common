@@ -1,0 +1,6 @@
+name            : site00
+id              : 0
+rfSubSystem     : 1
+latitude        : 37.807143
+longitude       : -122.261150
+controlChannels : [ 222.22222, 333.33333 ]
