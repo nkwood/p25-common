@@ -96,6 +96,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       );
       channelRate = (long) (sampleRate * resampling.getRateChange());
       iqSampleQueue.clear();
+
       log.info("source rate: " + sampleRate + ", channel rate: " + channelRate);
       log.info("interpolation: " + resampling.getInterpolation() + ", decimation: " + resampling.getDecimation());
 

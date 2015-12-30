@@ -36,8 +36,8 @@ public class TrunkingSignalingDataUnit extends DataUnit {
     intact = blocks.size() > 0;
   }
 
-  private TrunkingSignalingDataUnit(Nid nid,
-                                    DiBitByteBufferSink sink,
+  private TrunkingSignalingDataUnit(Nid                          nid,
+                                    DiBitByteBufferSink          sink,
                                     List<TrunkingSignalingBlock> blocks,
                                     boolean                      intact)
   {

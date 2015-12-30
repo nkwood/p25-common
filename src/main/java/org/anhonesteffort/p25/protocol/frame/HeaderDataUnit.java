@@ -56,7 +56,7 @@ public class HeaderDataUnit extends DataUnit {
     intact           = rsResult >= 0;
   }
 
-  private HeaderDataUnit(Nid nid,
+  private HeaderDataUnit(Nid                 nid,
                          DiBitByteBufferSink sink,
                          byte[]              messageIndicator,
                          int                 manufacturerId,

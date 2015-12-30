@@ -39,7 +39,7 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
     intact           = rsResult >= 0;
   }
 
-  private LogicalLinkDataUnit2(Nid nid,
+  private LogicalLinkDataUnit2(Nid                 nid,
                                DiBitByteBufferSink sink,
                                byte[][]            voiceCodeWords,
                                byte[]              messageIndicator,

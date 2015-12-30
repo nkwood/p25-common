@@ -40,7 +40,7 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
   private LogicalLinkDataUnit1(Nid                 nid,
                                DiBitByteBufferSink sink,
                                byte[][]            voiceCodeWords,
-                               LinkControlWord linkControlWord,
+                               LinkControlWord     linkControlWord,
                                boolean             intact)
   {
     super(nid, sink, voiceCodeWords);
