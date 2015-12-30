@@ -20,6 +20,7 @@ package org.anhonesteffort.p25.protocol;
 public class P25 {
 
   public static final Long   SAMPLE_RATE    = 48_000l;
+  public static final Long   MAX_RATE_DIFF  =    150l;
   public static final Long   SYMBOL_RATE    =  4_800l;
   public static final Double CHANNEL_WIDTH  = 12_500d;
   public static final Long   PASSBAND_STOP  =   6250l;

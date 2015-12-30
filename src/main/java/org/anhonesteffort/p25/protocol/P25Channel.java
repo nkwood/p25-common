@@ -54,7 +54,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
 
   private static final Logger log            = LoggerFactory.getLogger(P25Channel.class);
   private static final Long   TARGET_RATE    = P25.SAMPLE_RATE;
-  private static final Long   MAX_RATE_DIFF  = 150l;
+  private static final Long   MAX_RATE_DIFF  = P25.MAX_RATE_DIFF;
   private static final Long   SYMBOL_RATE    = P25.SYMBOL_RATE;
   private static final Long   PASSBAND_STOP  = P25.PASSBAND_STOP;
   private static final Long   STOPBAND_START = P25.STOPBAND_START;
@@ -134,7 +134,10 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   public void addSink(Sink<DataUnit> sink) {
     synchronized (processChainLock) {
       super.addSink(sink);
-      framer.addSink(sink);
+
+      if (framer != null) {
+        framer.addSink(sink);
+      }
     }
   }
 
@@ -142,7 +145,10 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   public void removeSink(Sink<DataUnit> sink) {
     synchronized (processChainLock) {
       super.removeSink(sink);
-      framer.removeSink(sink);
+
+      if (framer != null) {
+        framer.removeSink(sink);
+      }
     }
   }
 
