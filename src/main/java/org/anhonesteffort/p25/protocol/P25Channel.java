@@ -220,7 +220,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   }
 
   @Override
-  public Void call() throws Exception {
+  public Void call() {
     try {
 
       Stream.generate(this).forEach(samples -> {
