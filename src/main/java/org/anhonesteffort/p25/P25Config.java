@@ -45,6 +45,7 @@ public class P25Config {
 
   public static final int TSBK_GROUP_VOICE_CHAN_GRANT = 0x00;
   public static final int TSBK_ID_UPDATE_VUHF         = 0x34;
+  public static final int TSBK_RFSS_STATUS_BROADCAST  = 0x3A;
   public static final int TSBK_NETWORK_STATUS         = 0x3B;
   public static final int TSBK_ID_UPDATE_NO_VUHF      = 0x3D;
 

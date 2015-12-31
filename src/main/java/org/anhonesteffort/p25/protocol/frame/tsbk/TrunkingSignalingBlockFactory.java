@@ -46,6 +46,9 @@ public class TrunkingSignalingBlockFactory {
       case P25Config.TSBK_ID_UPDATE_VUHF:
         return new IdUpdateVuhf(intBytes12, isLast, isEncrypted, opCode);
 
+      case P25Config.TSBK_RFSS_STATUS_BROADCAST:
+        return new RfssStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
+
       case P25Config.TSBK_NETWORK_STATUS:
         return new NetworkStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
 
