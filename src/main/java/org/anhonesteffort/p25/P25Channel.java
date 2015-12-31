@@ -92,12 +92,13 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       resampling  = Optional.of(FilterFactory.getCicResampler(sourceRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
       channelRate = (long) (sourceRate * resampling.get().getRateChange());
       log.info(spec + " interpolation: " + resampling.get().getInterpolation() + ", " +
-               "decimation: "    + resampling.get().getDecimation());
+                      "decimation: "    + resampling.get().getDecimation());
     } else {
       resampling  = Optional.empty();
       channelRate = sourceRate;
     }
 
+    log.info(spec + " source rate: " + sourceRate + ", channel rate: " + channelRate);
     return resampling;
   }
 
@@ -112,8 +113,6 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   @Override
   public void onSourceStateChange(Long sampleRate, Double frequency) {
     synchronized (processChainLock) {
-      log.info(spec + " source rate: " + sampleRate + ", channel rate: " + channelRate);
-
       Optional<RateChangeFilter<ComplexNumber>> resampling = initResampling(sampleRate);
       QpskPolarSlicer                           slicer     = new QpskPolarSlicer();
 
