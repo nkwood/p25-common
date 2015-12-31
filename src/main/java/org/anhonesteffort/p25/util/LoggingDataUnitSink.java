@@ -38,31 +38,31 @@ public class LoggingDataUnitSink implements Sink<DataUnit> {
   public void consume(DataUnit element) {
     switch (element.getNid().getDuid().getId()) {
       case Duid.ID_HEADER:
-        log.debug(channelSpec + " decoded hdu: " + element);
+        log.info(channelSpec + " decoded hdu: " + element);
         break;
 
       case Duid.ID_LLDU1:
-        log.debug(channelSpec + " decoded lldu1: " + element);
+        log.info(channelSpec + " decoded lldu1: " + element);
         break;
 
       case Duid.ID_TRUNK_SIGNALING:
-        log.debug(channelSpec + " decoded tsdu: " + element);
+        log.info(channelSpec + " decoded tsdu: " + element);
         break;
 
       case Duid.ID_LLDU2:
-        log.debug("decoded lldu2: " + element);
+        log.info("decoded lldu2: " + element);
         break;
 
       case Duid.ID_TERMINATOR_W_LINK:
-        log.debug(channelSpec + " decoded terminator w/ link control");
+        log.info(channelSpec + " decoded terminator w/ link control");
         break;
 
       case Duid.ID_TERMINATOR_WO_LINK:
-        log.debug(channelSpec + " decoded terminator w/o link control");
+        log.info(channelSpec + " decoded terminator w/o link control");
         break;
 
       case Duid.ID_PACKET:
-        log.debug(channelSpec + " decoded a packet 0.o");
+        log.info(channelSpec + " decoded a packet 0.o");
         break;
     }
   }
