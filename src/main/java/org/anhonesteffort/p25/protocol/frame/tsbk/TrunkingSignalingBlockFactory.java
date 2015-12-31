@@ -19,7 +19,6 @@ package org.anhonesteffort.p25.protocol.frame.tsbk;
 
 import org.anhonesteffort.dsp.util.Util;
 import org.anhonesteffort.p25.ecc.DeinterleaveTrellisDecoder;
-import org.anhonesteffort.p25.P25Config;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,19 +39,19 @@ public class TrunkingSignalingBlockFactory {
     int     opCode      =  intBytes12[0] & 0x3F;
 
     switch (opCode) {
-      case P25Config.TSBK_GROUP_VOICE_CHAN_GRANT:
+      case TrunkingSignalingBlock.GROUP_VOICE_CHAN_GRANT:
         return new GroupVoiceChannelGrant(intBytes12, isLast, isEncrypted, opCode);
 
-      case P25Config.TSBK_ID_UPDATE_VUHF:
+      case TrunkingSignalingBlock.ID_UPDATE_VUHF:
         return new IdUpdateVuhf(intBytes12, isLast, isEncrypted, opCode);
 
-      case P25Config.TSBK_RFSS_STATUS_BROADCAST:
+      case TrunkingSignalingBlock.RFSS_STATUS_BROADCAST:
         return new RfssStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
 
-      case P25Config.TSBK_NETWORK_STATUS:
+      case TrunkingSignalingBlock.NETWORK_STATUS:
         return new NetworkStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
 
-      case P25Config.TSBK_ID_UPDATE_NO_VUHF:
+      case TrunkingSignalingBlock.ID_UPDATE_NO_VUHF:
         return new IdUpdateNoVuhf(intBytes12, isLast, isEncrypted, opCode);
 
       default:

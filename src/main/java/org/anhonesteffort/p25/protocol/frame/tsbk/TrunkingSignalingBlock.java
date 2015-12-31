@@ -21,6 +21,12 @@ import org.anhonesteffort.dsp.Copyable;
 
 public class TrunkingSignalingBlock implements Copyable<TrunkingSignalingBlock> {
 
+  public static final int GROUP_VOICE_CHAN_GRANT = 0x00;
+  public static final int ID_UPDATE_VUHF         = 0x34;
+  public static final int RFSS_STATUS_BROADCAST  = 0x3A;
+  public static final int NETWORK_STATUS         = 0x3B;
+  public static final int ID_UPDATE_NO_VUHF      = 0x3D;
+
   protected final boolean isLast;
   protected final boolean isEncrypted;
   protected final int     opCode;

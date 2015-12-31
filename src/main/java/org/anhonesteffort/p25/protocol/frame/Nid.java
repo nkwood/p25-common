@@ -25,7 +25,7 @@ import java.util.stream.IntStream;
 public class Nid {
 
   private final int     nac;
-  private final Duid duid;
+  private final Duid    duid;
   private final boolean intact;
 
   public Nid(int nac, Duid duid) {

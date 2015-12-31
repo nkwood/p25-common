@@ -18,7 +18,6 @@
 package org.anhonesteffort.p25.protocol;
 
 import org.anhonesteffort.dsp.Sink;
-import org.anhonesteffort.p25.P25Config;
 import org.anhonesteffort.p25.protocol.frame.tsbk.IdUpdateBlock;
 import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkingSignalingBlock;
 
@@ -36,8 +35,8 @@ public class ChannelIdUpdateBlockMap implements Sink<TrunkingSignalingBlock> {
   @Override
   public void consume(TrunkingSignalingBlock element) {
     switch (element.getOpCode()) {
-      case P25Config.TSBK_ID_UPDATE_VUHF:
-      case P25Config.TSBK_ID_UPDATE_NO_VUHF:
+      case TrunkingSignalingBlock.ID_UPDATE_VUHF:
+      case TrunkingSignalingBlock.ID_UPDATE_NO_VUHF:
         IdUpdateBlock idUpdateBlock = (IdUpdateBlock) element;
         idMap.put(idUpdateBlock.getId(), idUpdateBlock);
         break;

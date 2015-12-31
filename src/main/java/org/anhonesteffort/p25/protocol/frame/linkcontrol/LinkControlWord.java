@@ -21,6 +21,9 @@ import org.anhonesteffort.dsp.Copyable;
 
 public class LinkControlWord implements Copyable<LinkControlWord> {
 
+  public static final int LCF_GROUP = 0X00;
+  public static final int LCF_UNIT  = 0x03;
+
   protected final boolean protectedFlag;
   protected final boolean implicitMfid;
   protected final int     linkControlOpcode;
