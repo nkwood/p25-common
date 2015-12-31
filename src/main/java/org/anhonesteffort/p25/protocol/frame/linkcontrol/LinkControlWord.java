@@ -51,7 +51,7 @@ public class LinkControlWord implements Copyable<LinkControlWord> {
 
   @Override
   public LinkControlWord copy() {
-    return new LinkControlWord(protectedFlag, implicitMfid, linkControlOpcode);
+    return this;
   }
 
   @Override

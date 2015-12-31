@@ -37,22 +37,6 @@ public class GroupVoiceUserLwc extends LinkControlWord {
     sourceId       = (hexBits12[8] << 18) + (hexBits12[9] << 12) + (hexBits12[10] << 6) + hexBits12[11];
   }
 
-  private GroupVoiceUserLwc(boolean protectedFlag,
-                            boolean implicitMfid,
-                            int     linkControlOpcode,
-                            int     manufacturerId,
-                            boolean emergency,
-                            int     talkGroupId,
-                            int     sourceId)
-  {
-    super(protectedFlag, implicitMfid, linkControlOpcode);
-
-    this.manufacturerId = manufacturerId;
-    this.emergency      = emergency;
-    this.talkGroupId    = talkGroupId;
-    this.sourceId       = sourceId;
-  }
-
   public int getManufacturerId() {
     return manufacturerId;
   }
@@ -67,13 +51,6 @@ public class GroupVoiceUserLwc extends LinkControlWord {
 
   public int getSourceId() {
     return sourceId;
-  }
-
-  @Override
-  public GroupVoiceUserLwc copy() {
-    return new GroupVoiceUserLwc(
-        protectedFlag, implicitMfid, linkControlOpcode, manufacturerId, emergency, talkGroupId, sourceId
-    );
   }
 
   @Override

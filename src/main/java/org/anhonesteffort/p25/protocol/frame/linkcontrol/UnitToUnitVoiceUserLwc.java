@@ -35,20 +35,6 @@ public class UnitToUnitVoiceUserLwc extends LinkControlWord {
     sourceId       = (hexBits12[8] << 18) + (hexBits12[9] << 12) + (hexBits12[10] << 6) + hexBits12[11];
   }
 
-  private UnitToUnitVoiceUserLwc(boolean protectedFlag,
-                                 boolean implicitMfid,
-                                 int     linkControlOpcode,
-                                 int     manufacturerId,
-                                 int     destinationId,
-                                 int     sourceId)
-  {
-    super(protectedFlag, implicitMfid, linkControlOpcode);
-
-    this.manufacturerId = manufacturerId;
-    this.destinationId  = destinationId;
-    this.sourceId       = sourceId;
-  }
-
   public int getManufacturerId() {
     return manufacturerId;
   }
@@ -59,13 +45,6 @@ public class UnitToUnitVoiceUserLwc extends LinkControlWord {
 
   public int getSourceId() {
     return sourceId;
-  }
-
-  @Override
-  public UnitToUnitVoiceUserLwc copy() {
-    return new UnitToUnitVoiceUserLwc(
-        protectedFlag, implicitMfid, linkControlOpcode, manufacturerId, destinationId, sourceId
-    );
   }
 
   @Override
