@@ -25,6 +25,7 @@ import org.anhonesteffort.dsp.filter.ComplexNumberFrequencyTranslatingFilter;
 import org.anhonesteffort.dsp.filter.ComplexNumberMovingGainControl;
 import org.anhonesteffort.dsp.filter.Filter;
 import org.anhonesteffort.dsp.filter.FilterFactory;
+import org.anhonesteffort.dsp.filter.NoOpComplexNumberFilter;
 import org.anhonesteffort.dsp.filter.rate.RateChangeFilter;
 import org.anhonesteffort.dsp.sample.DynamicSink;
 import org.anhonesteffort.dsp.sample.Samples;
@@ -60,12 +61,12 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   private final P25Config config;
   private final P25ChannelSpec spec;
 
-  private ComplexNumberFrequencyTranslatingFilter freqTranslation;
-  private Filter<ComplexNumber>                   baseband;
-  private Filter<ComplexNumber>                   gainControl;
-  private ComplexNumberCqpskDemodulator           cqpskDemodulation;
-  private DataUnitFramer                          framer;
-  private Long                                    channelRate = -1l;
+  private Filter<ComplexNumber>         freqTranslation;
+  private Filter<ComplexNumber>         baseband;
+  private Filter<ComplexNumber>         gainControl;
+  private ComplexNumberCqpskDemodulator cqpskDemodulation;
+  private DataUnitFramer                framer;
+  private Long                          channelRate = -1l;
 
   public enum FilterType {
     TRANSLATION, BASEBAND, GAIN, DEMODULATION
@@ -84,31 +85,43 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     return spec;
   }
 
+  private Optional<RateChangeFilter<ComplexNumber>> initResampling(Long sourceRate) {
+    Optional<RateChangeFilter<ComplexNumber>> resampling;
+
+    if (Math.abs(sourceRate - P25Config.SAMPLE_RATE) > config.getMaxRateDiff()) {
+      resampling  = Optional.of(FilterFactory.getCicResampler(sourceRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
+      channelRate = (long) (sourceRate * resampling.get().getRateChange());
+      log.info("interpolation: " + resampling.get().getInterpolation() + ", " +
+               "decimation: "    + resampling.get().getDecimation());
+    } else {
+      resampling  = Optional.empty();
+      channelRate = sourceRate;
+    }
+
+    return resampling;
+  }
+
+  private Filter<ComplexNumber> getFreqTranslation(Long sourceRate, Double sourceFreq) {
+    if (sourceFreq >= 1d) {
+      return new ComplexNumberFrequencyTranslatingFilter(sourceRate, sourceFreq, spec.getCenterFrequency());
+    } else {
+      return new NoOpComplexNumberFilter();
+    }
+  }
+
   @Override
   public void onSourceStateChange(Long sampleRate, Double frequency) {
     synchronized (processChainLock) {
-      Optional<RateChangeFilter<ComplexNumber>> resampling;
-
-      if (Math.abs(sampleRate - P25Config.SAMPLE_RATE) > config.getMaxRateDiff()) {
-        resampling  = Optional.of(FilterFactory.getCicResampler(sampleRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
-        channelRate = (long) (sampleRate * resampling.get().getRateChange());
-        log.info("interpolation: " + resampling.get().getInterpolation() + ", " +
-                 "decimation: "    + resampling.get().getDecimation());
-      } else {
-        resampling  = Optional.empty();
-        channelRate = sampleRate;
-        log.info("source rate is acceptable, no need to resample");
-      }
-
       log.info("source rate: " + sampleRate + ", channel rate: " + channelRate);
 
-      freqTranslation   = new ComplexNumberFrequencyTranslatingFilter(sampleRate, frequency, spec.getCenterFrequency());
+      Optional<RateChangeFilter<ComplexNumber>> resampling = initResampling(sampleRate);
+      QpskPolarSlicer                           slicer     = new QpskPolarSlicer();
+
+      freqTranslation   = getFreqTranslation(sampleRate, frequency);
       baseband          = FilterFactory.getKaiserBessel(channelRate, config.getPassbandStop(), config.getStopbandStart(), config.getAttenuation(), 1f);
       gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / P25Config.SYMBOL_RATE));
       cqpskDemodulation = new ComplexNumberCqpskDemodulator(channelRate, P25Config.SYMBOL_RATE);
-
-      QpskPolarSlicer slicer = new QpskPolarSlicer();
-                      framer = new DataUnitFramer(Optional.of(cqpskDemodulation));
+      framer            = new DataUnitFramer(Optional.of(cqpskDemodulation));
 
       if (resampling.isPresent()) {
         freqTranslation.addSink(resampling.get());
