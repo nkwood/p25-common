@@ -91,7 +91,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     if (Math.abs(sourceRate - P25Config.SAMPLE_RATE) > config.getMaxRateDiff()) {
       resampling  = Optional.of(FilterFactory.getCicResampler(sourceRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
       channelRate = (long) (sourceRate * resampling.get().getRateChange());
-      log.info("interpolation: " + resampling.get().getInterpolation() + ", " +
+      log.info(spec + " interpolation: " + resampling.get().getInterpolation() + ", " +
                "decimation: "    + resampling.get().getDecimation());
     } else {
       resampling  = Optional.empty();
@@ -112,7 +112,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
   @Override
   public void onSourceStateChange(Long sampleRate, Double frequency) {
     synchronized (processChainLock) {
-      log.info("source rate: " + sampleRate + ", channel rate: " + channelRate);
+      log.info(spec + " source rate: " + sampleRate + ", channel rate: " + channelRate);
 
       Optional<RateChangeFilter<ComplexNumber>> resampling = initResampling(sampleRate);
       QpskPolarSlicer                           slicer     = new QpskPolarSlicer();
@@ -227,7 +227,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     if (!iqSampleQueue.offer(samples.getSamples())) {
       iqSampleQueue.clear();
       iqSampleQueue.offer(samples.getSamples());
-      log.warn("sample queue for channel " + spec + " has overflowed");
+      log.warn(spec + " sample queue for channel has overflowed");
     }
   }
 
@@ -260,7 +260,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
       });
 
     } catch (StreamInterruptedException e) {
-      log.debug("channel " + spec + " interrupted, assuming execution was canceled");
+      log.debug(spec + " interrupted, assuming execution was canceled");
     } finally {
       iqSampleQueue.clear();
     }

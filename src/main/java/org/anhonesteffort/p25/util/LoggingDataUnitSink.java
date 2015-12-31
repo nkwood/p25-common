@@ -17,6 +17,7 @@
 
 package org.anhonesteffort.p25.util;
 
+import org.anhonesteffort.dsp.ChannelSpec;
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 import org.anhonesteffort.p25.protocol.frame.Duid;
@@ -27,19 +28,25 @@ public class LoggingDataUnitSink implements Sink<DataUnit> {
 
   private final static Logger log = LoggerFactory.getLogger(LoggingDataUnitSink.class);
 
+  private final ChannelSpec channelSpec;
+
+  public LoggingDataUnitSink(ChannelSpec channelSpec) {
+    this.channelSpec = channelSpec;
+  }
+
   @Override
   public void consume(DataUnit element) {
     switch (element.getNid().getDuid().getId()) {
       case Duid.ID_HEADER:
-        log.debug("decoded hdu: " + element);
+        log.debug(channelSpec + " decoded hdu: " + element);
         break;
 
       case Duid.ID_LLDU1:
-        log.debug("decoded lldu1: " + element);
+        log.debug(channelSpec + " decoded lldu1: " + element);
         break;
 
       case Duid.ID_TRUNK_SIGNALING:
-        log.debug("decoded tsdu: " + element);
+        log.debug(channelSpec + " decoded tsdu: " + element);
         break;
 
       case Duid.ID_LLDU2:
@@ -47,15 +54,15 @@ public class LoggingDataUnitSink implements Sink<DataUnit> {
         break;
 
       case Duid.ID_TERMINATOR_W_LINK:
-        log.debug("decoded terminator w/ link control");
+        log.debug(channelSpec + " decoded terminator w/ link control");
         break;
 
       case Duid.ID_TERMINATOR_WO_LINK:
-        log.debug("decoded terminator w/o link control");
+        log.debug(channelSpec + " decoded terminator w/o link control");
         break;
 
       case Duid.ID_PACKET:
-        log.debug("decoded a packet 0.o");
+        log.debug(channelSpec + " decoded a packet 0.o");
         break;
     }
   }
