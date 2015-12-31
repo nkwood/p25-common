@@ -136,7 +136,7 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
         break;
 
       case Duid.ID_TRUNK_SIGNALING:
-        broadcast(new TrunkingSignalingDataUnit(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new TrunkSignalDataUnit(dataUnit.getNid(), dataUnit.sink));
         break;
 
       case Duid.ID_LLDU2:

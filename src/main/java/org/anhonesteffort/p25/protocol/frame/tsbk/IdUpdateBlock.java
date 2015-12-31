@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public abstract class IdUpdateBlock extends SingleTrunkSignalingBlock {
+public abstract class IdUpdateBlock extends SingleTrunkSignalBlock {
 
   protected final int  id;
   protected final int  channelSpacing;

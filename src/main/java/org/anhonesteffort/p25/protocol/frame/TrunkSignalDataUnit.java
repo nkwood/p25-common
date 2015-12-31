@@ -18,28 +18,28 @@
 package org.anhonesteffort.p25.protocol.frame;
 
 import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
-import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkingSignalingBlock;
-import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkingSignalingBlockFactory;
+import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlock;
+import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlockFactory;
 
 import java.util.List;
 import java.util.Optional;
 
-public class TrunkingSignalingDataUnit extends DataUnit {
+public class TrunkSignalDataUnit extends DataUnit {
 
-  private final List<TrunkingSignalingBlock> blocks;
-  private final boolean intact;
+  private final List<TrunkSignalBlock> blocks;
+  private final boolean                intact;
 
-  public TrunkingSignalingDataUnit(Nid nid, DiBitByteBufferSink sink) {
+  public TrunkSignalDataUnit(Nid nid, DiBitByteBufferSink sink) {
     super(nid, sink);
 
-    blocks = new TrunkingSignalingBlockFactory().getBlocksFor(sink.getBytes().array());
+    blocks = new TrunkSignalBlockFactory().getBlocksFor(sink.getBytes().array());
     intact = blocks.size() > 0;
   }
 
-  private TrunkingSignalingDataUnit(Nid                          nid,
-                                    DiBitByteBufferSink          sink,
-                                    List<TrunkingSignalingBlock> blocks,
-                                    boolean                      intact)
+  private TrunkSignalDataUnit(Nid                     nid,
+                              DiBitByteBufferSink    sink,
+                              List<TrunkSignalBlock> blocks,
+                              boolean                intact)
   {
     super(nid, sink);
 
@@ -52,19 +52,19 @@ public class TrunkingSignalingDataUnit extends DataUnit {
     return intact;
   }
 
-  public List<TrunkingSignalingBlock> getBlocks() {
+  public List<TrunkSignalBlock> getBlocks() {
     return blocks;
   }
 
-  public Optional<TrunkingSignalingBlock> getFirstOf(int opCode) {
+  public Optional<TrunkSignalBlock> getFirstOf(int opCode) {
     return blocks.stream()
                  .filter(block -> block.getOpCode() == opCode)
                  .findFirst();
   }
 
   @Override
-  public TrunkingSignalingDataUnit copy() {
-    return new TrunkingSignalingDataUnit(nid, sink.copy(), blocks, intact);
+  public TrunkSignalDataUnit copy() {
+    return new TrunkSignalDataUnit(nid, sink.copy(), blocks, intact);
   }
 
   @Override

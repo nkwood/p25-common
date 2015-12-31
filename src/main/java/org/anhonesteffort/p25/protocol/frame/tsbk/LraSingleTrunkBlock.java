@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public class LraSingleTrunkBlock extends SingleTrunkSignalingBlock {
+public class LraSingleTrunkBlock extends SingleTrunkSignalBlock {
 
   protected final int lra;
 

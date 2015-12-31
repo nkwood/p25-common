@@ -18,7 +18,7 @@
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
 public abstract class ChannelGrantBlock
-    extends SingleTrunkSignalingBlock implements DownlinkFreqProvider {
+    extends SingleTrunkSignalBlock implements DownlinkFreqProvider {
 
   protected final int channelId;
   protected final int channelNumber;

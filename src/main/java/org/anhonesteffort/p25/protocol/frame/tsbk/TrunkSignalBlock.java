@@ -17,38 +17,34 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public class SingleTrunkSignalingBlock extends TrunkingSignalingBlock {
+import org.anhonesteffort.dsp.Copyable;
 
-  protected final boolean isLast;
-  protected final boolean isEncrypted;
-  protected final int     manufacturerId;
+public class TrunkSignalBlock implements Copyable<TrunkSignalBlock> {
 
-  public SingleTrunkSignalingBlock(int[] bytes12) {
-    super(bytes12[0] & 0x3F);
+  public static final int GROUP_VOICE_CHAN_GRANT = 0x00;
+  public static final int ID_UPDATE_VUHF         = 0x34;
+  public static final int RFSS_STATUS_BROADCAST  = 0x3A;
+  public static final int NETWORK_STATUS         = 0x3B;
+  public static final int ID_UPDATE_NO_VUHF      = 0x3D;
 
-    isLast         = (bytes12[0] & 0x80) == 0x80;
-    isEncrypted    = (bytes12[0] & 0x40) == 0x40;
-    manufacturerId = bytes12[1];
+  protected final int opCode;
+
+  public TrunkSignalBlock(int opCode) {
+    this.opCode = opCode;
   }
 
-  public boolean isLast() {
-    return isLast;
+  public int getOpCode() {
+    return opCode;
   }
 
-  public boolean isEncrypted() {
-    return isEncrypted;
-  }
-
-  public int getManufacturerId() {
-    return manufacturerId;
+  @Override
+  public TrunkSignalBlock copy() {
+    return this;
   }
 
   @Override
   public String toString() {
-    return super.toString()     + ", " +
-        "last: "  + isLast      + ", " +
-        "crypt: " + isEncrypted + ", " +
-        "make: "  + manufacturerId;
+    return "opc: " + opCode;
   }
 
 }

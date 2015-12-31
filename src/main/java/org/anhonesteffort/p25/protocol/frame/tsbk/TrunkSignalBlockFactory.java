@@ -26,38 +26,38 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.IntStream;
 
-public class TrunkingSignalingBlockFactory {
+public class TrunkSignalBlockFactory {
 
-  private static final Logger log = LoggerFactory.getLogger(TrunkingSignalingBlockFactory.class);
+  private static final Logger log = LoggerFactory.getLogger(TrunkSignalBlockFactory.class);
 
-  private TrunkingSignalingBlock getBlockFor(byte[] bytes12) {
+  private TrunkSignalBlock getBlockFor(byte[] bytes12) {
     int[] intBytes12 = new int[12];
     IntStream.range(0, 12).forEach(i -> intBytes12[i] = (bytes12[i] & 0xFF));
     int opCode = intBytes12[0] & 0x3F;
 
     switch (opCode) {
-      case TrunkingSignalingBlock.GROUP_VOICE_CHAN_GRANT:
+      case TrunkSignalBlock.GROUP_VOICE_CHAN_GRANT:
         return new GroupVoiceChannelGrant(intBytes12);
 
-      case TrunkingSignalingBlock.ID_UPDATE_VUHF:
+      case TrunkSignalBlock.ID_UPDATE_VUHF:
         return new IdUpdateVuhf(intBytes12);
 
-      case TrunkingSignalingBlock.RFSS_STATUS_BROADCAST:
+      case TrunkSignalBlock.RFSS_STATUS_BROADCAST:
         return new RfssStatusBroadcastMessage(intBytes12);
 
-      case TrunkingSignalingBlock.NETWORK_STATUS:
+      case TrunkSignalBlock.NETWORK_STATUS:
         return new NetworkStatusBroadcastMessage(intBytes12);
 
-      case TrunkingSignalingBlock.ID_UPDATE_NO_VUHF:
+      case TrunkSignalBlock.ID_UPDATE_NO_VUHF:
         return new IdUpdateNoVuhf(intBytes12);
 
       default:
-        return new TrunkingSignalingBlock(opCode);
+        return new TrunkSignalBlock(opCode);
     }
   }
 
-  public List<TrunkingSignalingBlock> getBlocksFor(byte[] bytes) {
-    List<TrunkingSignalingBlock> blocks  = new LinkedList<>();
+  public List<TrunkSignalBlock> getBlocksFor(byte[] bytes) {
+    List<TrunkSignalBlock> blocks  = new LinkedList<>();
     DeinterleaveTrellisDecoder   decoder = new DeinterleaveTrellisDecoder();
 
     for (int bit = 0; bit < (bytes.length * 8); bit += 196) {
@@ -66,12 +66,12 @@ public class TrunkingSignalingBlockFactory {
       int    result  = decoder.decode(bits196, bytes12);
 
       if (result == 0) {
-        TrunkingSignalingBlock block = getBlockFor(bytes12);
+        TrunkSignalBlock block = getBlockFor(bytes12);
         blocks.add(block);
 
-        if (!(block instanceof SingleTrunkSignalingBlock)) {
+        if (!(block instanceof SingleTrunkSignalBlock)) {
           break;
-        } else if (((SingleTrunkSignalingBlock) block).isLast()) {
+        } else if (((SingleTrunkSignalBlock) block).isLast()) {
           break;
         }
 

@@ -19,12 +19,12 @@ package org.anhonesteffort.p25.protocol;
 
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.p25.protocol.frame.tsbk.IdUpdateBlock;
-import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkingSignalingBlock;
+import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlock;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-public class ChannelIdUpdateBlockMap implements Sink<TrunkingSignalingBlock> {
+public class ChannelIdUpdateBlockMap implements Sink<TrunkSignalBlock> {
 
   private final HashMap<Integer, IdUpdateBlock> idMap = new HashMap<>();
 
@@ -33,10 +33,10 @@ public class ChannelIdUpdateBlockMap implements Sink<TrunkingSignalingBlock> {
   }
 
   @Override
-  public void consume(TrunkingSignalingBlock element) {
+  public void consume(TrunkSignalBlock element) {
     switch (element.getOpCode()) {
-      case TrunkingSignalingBlock.ID_UPDATE_VUHF:
-      case TrunkingSignalingBlock.ID_UPDATE_NO_VUHF:
+      case TrunkSignalBlock.ID_UPDATE_VUHF:
+      case TrunkSignalBlock.ID_UPDATE_NO_VUHF:
         IdUpdateBlock idUpdateBlock = (IdUpdateBlock) element;
         idMap.put(idUpdateBlock.getId(), idUpdateBlock);
         break;
