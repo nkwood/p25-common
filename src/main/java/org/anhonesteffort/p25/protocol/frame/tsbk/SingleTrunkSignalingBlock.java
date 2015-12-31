@@ -17,30 +17,38 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public abstract class ChannelGrantBlock
-    extends SingleTrunkSignalingBlock implements DownlinkFreqProvider {
+public class SingleTrunkSignalingBlock extends TrunkingSignalingBlock {
 
-  protected final int channelId;
-  protected final int channelNumber;
+  protected final boolean isLast;
+  protected final boolean isEncrypted;
+  protected final int     manufacturerId;
 
-  public ChannelGrantBlock(int bytes12[]) {
-    super(bytes12);
+  public SingleTrunkSignalingBlock(int[] bytes12) {
+    super(bytes12[0] & 0x3F);
 
-    channelId     = (bytes12[3] & 0xF0) >> 4;
-    channelNumber = ((bytes12[3] & 0x0F) << 8) + bytes12[4];
+    isLast         = (bytes12[0] & 0x80) == 0x80;
+    isEncrypted    = (bytes12[0] & 0x40) == 0x40;
+    manufacturerId = bytes12[1];
   }
 
-  public int getChannelId() {
-    return channelId;
+  public boolean isLast() {
+    return isLast;
   }
 
-  public int getChannelNumber() {
-    return channelNumber;
+  public boolean isEncrypted() {
+    return isEncrypted;
+  }
+
+  public int getManufacturerId() {
+    return manufacturerId;
   }
 
   @Override
   public String toString() {
-    return super.toString() + ", " + "chnId: " + channelId + ", " + "chnN: " + channelNumber;
+    return super.toString()     + ", " +
+        "last: "  + isLast      + ", " +
+        "crypt: " + isEncrypted + ", " +
+        "make: "  + manufacturerId;
   }
 
 }

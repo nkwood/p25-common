@@ -17,44 +17,32 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public class RfssStatusBroadcastMessage extends TrunkingSignalingBlock implements DownlinkFreqProvider {
+public class RfssStatusBroadcastMessage
+    extends LraSingleTrunkBlock implements DownlinkFreqProvider {
 
-  private final int systemId;
-  private final int rfSubSystemId;
-  private final int siteId;
-  private final int channelId;
-  private final int channelNumber;
+  private final boolean isFssConnected;
+  private final int     systemId;
+  private final int     rfSubSystemId;
+  private final int     siteId;
+  private final int     channelId;
+  private final int     channelNumber;
+  private final int     systemServiceClass;
 
-  public RfssStatusBroadcastMessage(int[]   bytes12,
-                                    boolean isLast,
-                                    boolean isEncrypted,
-                                    int     opCode)
+  public RfssStatusBroadcastMessage(int[] bytes12)
   {
-    super(isLast, isEncrypted, opCode);
+    super(bytes12);
 
-    systemId      = ((bytes12[3] & 0x0F) << 8) + bytes12[4];
-    rfSubSystemId = bytes12[5];
-    siteId        = bytes12[6];
-    channelId     = (bytes12[7] & 0xF0) >> 4;
-    channelNumber = ((bytes12[7] & 0x0F) << 8) + bytes12[8];
+    isFssConnected     = (bytes12[3] & 0x10) > 0;
+    systemId           = ((bytes12[3] & 0x0F) << 8) + bytes12[4];
+    rfSubSystemId      = bytes12[5];
+    siteId             = bytes12[6];
+    channelId          = (bytes12[7] & 0xF0) >> 4;
+    channelNumber      = ((bytes12[7] & 0x0F) << 8) + bytes12[8];
+    systemServiceClass = bytes12[9];
   }
 
-  private RfssStatusBroadcastMessage(boolean isLast,
-                                     boolean isEncrypted,
-                                     int     opCode,
-                                     int     systemId,
-                                     int     rfSubSystemId,
-                                     int     siteId,
-                                     int     channelId,
-                                     int     channelNumber)
-  {
-    super(isLast, isEncrypted, opCode);
-
-    this.systemId      = systemId;
-    this.rfSubSystemId = rfSubSystemId;
-    this.siteId        = siteId;
-    this.channelId     = channelId;
-    this.channelNumber = channelNumber;
+  public boolean isFssConnected() {
+    return isFssConnected;
   }
 
   public int getSystemId() {
@@ -77,26 +65,25 @@ public class RfssStatusBroadcastMessage extends TrunkingSignalingBlock implement
     return channelNumber;
   }
 
+  public int getSystemServiceClass() {
+    return systemServiceClass;
+  }
+
   @Override
   public double getDownlinkFreq(IdUpdateBlock idBlock) {
     return idBlock.getBaseFreq() + (channelNumber * idBlock.getChannelSpacing());
   }
 
   @Override
-  public RfssStatusBroadcastMessage copy() {
-    return new RfssStatusBroadcastMessage(
-        isLast, isEncrypted, opCode, systemId, rfSubSystemId, siteId, channelId, channelNumber
-    );
-  }
-
-  @Override
   public String toString() {
-    return "[last: "    + isLast        + ", " +
-            "crypt: "   + isEncrypted   + ", " +
-            "opc: "     + opCode        + ", " +
-            "sysid: "   + systemId      + ", " +
-            "rfsub: "   + rfSubSystemId + ", " +
-            "siteid: "  + siteId        + "]";
+    return super.toString() + ", " +
+        "fss: "    + isFssConnected + ", " +
+        "sysId: "  + systemId       + ", " +
+        "subId: "  + rfSubSystemId  + ", " +
+        "siteId: " + siteId         + ", " +
+        "chnId: "  + channelId      + ", " +
+        "chnN: "   + channelNumber  + ", " +
+        "ssc: "    + systemServiceClass;
   }
 
 }

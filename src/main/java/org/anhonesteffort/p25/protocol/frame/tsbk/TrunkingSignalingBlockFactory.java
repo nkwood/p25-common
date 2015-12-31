@@ -33,29 +33,26 @@ public class TrunkingSignalingBlockFactory {
   private TrunkingSignalingBlock getBlockFor(byte[] bytes12) {
     int[] intBytes12 = new int[12];
     IntStream.range(0, 12).forEach(i -> intBytes12[i] = (bytes12[i] & 0xFF));
-
-    boolean isLast      = (intBytes12[0] & 0x80) == 0x80;
-    boolean isEncrypted = (intBytes12[0] & 0x40) == 0x40;
-    int     opCode      =  intBytes12[0] & 0x3F;
+    int opCode = intBytes12[0] & 0x3F;
 
     switch (opCode) {
       case TrunkingSignalingBlock.GROUP_VOICE_CHAN_GRANT:
-        return new GroupVoiceChannelGrant(intBytes12, isLast, isEncrypted, opCode);
+        return new GroupVoiceChannelGrant(intBytes12);
 
       case TrunkingSignalingBlock.ID_UPDATE_VUHF:
-        return new IdUpdateVuhf(intBytes12, isLast, isEncrypted, opCode);
+        return new IdUpdateVuhf(intBytes12);
 
       case TrunkingSignalingBlock.RFSS_STATUS_BROADCAST:
-        return new RfssStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
+        return new RfssStatusBroadcastMessage(intBytes12);
 
       case TrunkingSignalingBlock.NETWORK_STATUS:
-        return new NetworkStatusBroadcastMessage(intBytes12, isLast, isEncrypted, opCode);
+        return new NetworkStatusBroadcastMessage(intBytes12);
 
       case TrunkingSignalingBlock.ID_UPDATE_NO_VUHF:
-        return new IdUpdateNoVuhf(intBytes12, isLast, isEncrypted, opCode);
+        return new IdUpdateNoVuhf(intBytes12);
 
       default:
-        return new TrunkingSignalingBlock(isLast, isEncrypted, opCode);
+        return new TrunkingSignalingBlock(opCode);
     }
   }
 
@@ -72,9 +69,12 @@ public class TrunkingSignalingBlockFactory {
         TrunkingSignalingBlock block = getBlockFor(bytes12);
         blocks.add(block);
 
-        if (block.isLast()) {
+        if (!(block instanceof SingleTrunkSignalingBlock)) {
+          break;
+        } else if (((SingleTrunkSignalingBlock) block).isLast()) {
           break;
         }
+
       } else {
         log.warn("unable to recover block #" + (bit / 196));
         break;

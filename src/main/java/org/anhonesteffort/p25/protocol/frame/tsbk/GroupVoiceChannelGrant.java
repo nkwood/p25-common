@@ -22,25 +22,11 @@ public class GroupVoiceChannelGrant extends ChannelGrantBlock {
   private final int groupAddress;
   private final int sourceAddress;
 
-  public GroupVoiceChannelGrant(int[] bytes12, boolean isLast, boolean isEncrypted, int opCode) {
-    super(bytes12, isLast, isEncrypted, opCode);
+  public GroupVoiceChannelGrant(int[] bytes12) {
+    super(bytes12);
 
     groupAddress  = (bytes12[5] << 8)  + bytes12[6];
     sourceAddress = (bytes12[7] << 16) + (bytes12[8] << 8) + bytes12[9];
-  }
-
-  private GroupVoiceChannelGrant(boolean isLast,
-                                 boolean isEncrypted,
-                                 int     opCode,
-                                 int     channelId,
-                                 int     channelNumber,
-                                 int     groupAddress,
-                                 int     sourceAddress)
-  {
-    super(isLast, isEncrypted, opCode, channelId, channelNumber);
-
-    this.groupAddress  = groupAddress;
-    this.sourceAddress = sourceAddress;
   }
 
   public int getGroupAddress() {
@@ -54,13 +40,6 @@ public class GroupVoiceChannelGrant extends ChannelGrantBlock {
   @Override
   public double getDownlinkFreq(IdUpdateBlock idBlock) {
     return idBlock.getBaseFreq() + (channelNumber * idBlock.getChannelSpacing());
-  }
-
-  @Override
-  public GroupVoiceChannelGrant copy() {
-    return new GroupVoiceChannelGrant(
-        isLast, isEncrypted, opCode, channelId, channelNumber, groupAddress, sourceAddress
-    );
   }
 
 }

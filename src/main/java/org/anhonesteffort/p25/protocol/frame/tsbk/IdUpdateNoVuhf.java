@@ -22,26 +22,11 @@ public class IdUpdateNoVuhf extends IdUpdateBlock {
   private final int bandwidth;
   private final int transmitOffset;
 
-  public IdUpdateNoVuhf(int[] bytes12, boolean isLast, boolean isEncrypted, int opCode) {
-    super(bytes12, isLast, isEncrypted, opCode);
+  public IdUpdateNoVuhf(int[] bytes12) {
+    super(bytes12);
 
     bandwidth      = ((bytes12[2] & 0x0F) << 5) + ((bytes12[3] & 0xF8) >> 3);
     transmitOffset = ((bytes12[3] & 0x07) << 6) + ((bytes12[4] & 0xFC) >> 2);
-  }
-
-  public IdUpdateNoVuhf(boolean isLast,
-                        boolean isEncrypted,
-                        int     opCode,
-                        int     id,
-                        int     channelSpacing,
-                        long    baseFreq,
-                        int     bandwidth,
-                        int     transmitOffset)
-  {
-    super(isLast, isEncrypted, opCode, id, channelSpacing, baseFreq);
-
-    this.bandwidth      = bandwidth;
-    this.transmitOffset = transmitOffset;
   }
 
   @Override
@@ -54,10 +39,4 @@ public class IdUpdateNoVuhf extends IdUpdateBlock {
     return transmitOffset;
   }
 
-  @Override
-  public IdUpdateNoVuhf copy() {
-    return new IdUpdateNoVuhf(
-        isLast, isEncrypted, opCode, id, channelSpacing, baseFreq, bandwidth, transmitOffset
-    );
-  }
 }

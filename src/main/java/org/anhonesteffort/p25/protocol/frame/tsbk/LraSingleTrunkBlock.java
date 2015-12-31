@@ -17,30 +17,22 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public abstract class ChannelGrantBlock
-    extends SingleTrunkSignalingBlock implements DownlinkFreqProvider {
+public class LraSingleTrunkBlock extends SingleTrunkSignalingBlock {
 
-  protected final int channelId;
-  protected final int channelNumber;
+  protected final int lra;
 
-  public ChannelGrantBlock(int bytes12[]) {
+  public LraSingleTrunkBlock(int[] bytes12) {
     super(bytes12);
-
-    channelId     = (bytes12[3] & 0xF0) >> 4;
-    channelNumber = ((bytes12[3] & 0x0F) << 8) + bytes12[4];
+    lra = bytes12[2];
   }
 
-  public int getChannelId() {
-    return channelId;
-  }
-
-  public int getChannelNumber() {
-    return channelNumber;
+  public int getLra() {
+    return lra;
   }
 
   @Override
   public String toString() {
-    return super.toString() + ", " + "chnId: " + channelId + ", " + "chnN: " + channelNumber;
+    return super.toString() + ", lra: " + lra;
   }
 
 }

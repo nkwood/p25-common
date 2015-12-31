@@ -17,32 +17,18 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-public abstract class IdUpdateBlock extends TrunkingSignalingBlock {
+public abstract class IdUpdateBlock extends SingleTrunkSignalingBlock {
 
   protected final int  id;
   protected final int  channelSpacing;
   protected final long baseFreq;
 
-  public IdUpdateBlock(int[] bytes12, boolean isLast, boolean isEncrypted, int opCode) {
-    super(isLast, isEncrypted, opCode);
+  public IdUpdateBlock(int[] bytes12) {
+    super(bytes12);
 
     id             = bytes12[2] >> 4;
     channelSpacing = bytes12[5];
     baseFreq       = (bytes12[6] << 24) + (bytes12[7] << 16) + (bytes12[8] << 8) + bytes12[9];
-  }
-
-  protected IdUpdateBlock(boolean isLast,
-                          boolean isEncrypted,
-                          int     opCode,
-                          int     id,
-                          int     channelSpacing,
-                          long    baseFreq)
-  {
-    super(isLast, isEncrypted, opCode);
-
-    this.id             = id;
-    this.channelSpacing = channelSpacing;
-    this.baseFreq       = baseFreq;
   }
 
   public int getId() {
@@ -59,6 +45,16 @@ public abstract class IdUpdateBlock extends TrunkingSignalingBlock {
 
   public long getBaseFreq() {
     return baseFreq * 5;
+  }
+
+  @Override
+  public String toString() {
+    return super.toString() + ", " +
+        "id: "       + id             + ", " +
+        "chnSpace: " + channelSpacing + ", " +
+        "baseFreq: " + baseFreq       + ", " +
+        "bw: "       + getBandwidth() + ", " +
+        "txOff: "    + getTransmitOffset();
   }
 
 }

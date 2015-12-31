@@ -27,24 +27,10 @@ public class TrunkingSignalingBlock implements Copyable<TrunkingSignalingBlock> 
   public static final int NETWORK_STATUS         = 0x3B;
   public static final int ID_UPDATE_NO_VUHF      = 0x3D;
 
-  protected final boolean isLast;
-  protected final boolean isEncrypted;
-  protected final int     opCode;
+  protected final int opCode;
 
-  protected TrunkingSignalingBlock(boolean isLast, boolean isEncrypted, int opCode) {
-    this.isLast      = isLast;
-    this.isEncrypted = isEncrypted;
-    this.opCode      = opCode;
-
-    // todo: manufacturer id field
-  }
-
-  public boolean isLast() {
-    return isLast;
-  }
-
-  public boolean isEncrypted() {
-    return isEncrypted;
+  public TrunkingSignalingBlock(int opCode) {
+    this.opCode = opCode;
   }
 
   public int getOpCode() {
@@ -53,14 +39,12 @@ public class TrunkingSignalingBlock implements Copyable<TrunkingSignalingBlock> 
 
   @Override
   public TrunkingSignalingBlock copy() {
-    return new TrunkingSignalingBlock(isLast, isEncrypted, opCode);
+    return this;
   }
 
   @Override
   public String toString() {
-    return "[last: "  + isLast      + ", " +
-            "crypt: " + isEncrypted + ", " +
-            "opc: "   + opCode      + "]";
+    return "opc: " + opCode;
   }
 
 }
