@@ -76,7 +76,7 @@ public class TrunkSignalBlockFactory {
         }
 
       } else {
-        log.warn("unable to recover block #" + (bit / 196));
+        log.debug("unable to recover block #" + (bit / 196));
         break;
       }
     }

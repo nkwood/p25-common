@@ -112,7 +112,7 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
   }
 
   private void onNidCorrupt(DiBitSyncGate sourceGate) {
-    log.warn("on nid corrupt: " + (++corruptCount));
+    log.debug("on nid corrupt: " + (++corruptCount));
     syncGates.remove(sourceGate);
   }
 
