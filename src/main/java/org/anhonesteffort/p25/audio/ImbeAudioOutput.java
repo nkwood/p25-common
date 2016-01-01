@@ -23,6 +23,7 @@ import org.anhonesteffort.jmbe.iface.AudioConverter;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 import org.anhonesteffort.p25.protocol.frame.Duid;
 import org.anhonesteffort.p25.protocol.frame.LogicalLinkDataUnit;
+import org.anhonesteffort.p25.protocol.frame.LogicalLinkDataUnit2;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +51,7 @@ public class ImbeAudioOutput implements Sink<DataUnit> {
 
   private final AudioConverter audioConverter;
   private final SourceDataLine output;
+  private boolean isEncrypted = false;
 
   public ImbeAudioOutput() throws ReflectiveOperationException, LineUnavailableException {
     audioConverter = new JMBEAudioLibrary().getAudioConverter(JMBE_CODEC, AUDIO_FORMAT);
@@ -64,12 +66,23 @@ public class ImbeAudioOutput implements Sink<DataUnit> {
 
   @Override
   public void consume(DataUnit element) {
+    if (isEncrypted) {
+      return;
+    }
+
     switch (element.getNid().getDuid().getId()) {
-      case Duid.ID_LLDU1:
       case Duid.ID_LLDU2:
+        LogicalLinkDataUnit2 lldu2 = (LogicalLinkDataUnit2) element;
+        if (lldu2.getAlgorithmId() != 0x80) {
+          log.warn("aborting audio playback, voice traffic is encrypted");
+          isEncrypted = true;
+          return;
+        }
+
+      case Duid.ID_LLDU1:
         LogicalLinkDataUnit lldu = (LogicalLinkDataUnit) element;
         if (!lldu.isIntact()) {
-          log.warn("skipping lldu audio playback, frames are corrupted");
+          log.warn("skipping audio playback, frame is corrupted");
           return;
         }
 
