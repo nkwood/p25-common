@@ -22,11 +22,12 @@ import org.anhonesteffort.p25.protocol.frame.tsbk.IdUpdateBlock;
 import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlock;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class ChannelIdUpdateBlockMap implements Sink<TrunkSignalBlock> {
 
-  private final HashMap<Integer, IdUpdateBlock> idMap = new HashMap<>();
+  private final Map<Integer, IdUpdateBlock> idMap = new HashMap<>();
 
   public Optional<IdUpdateBlock> getBlockForId(int channelId) {
     return Optional.ofNullable(idMap.get(channelId));

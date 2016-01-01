@@ -57,8 +57,8 @@ public class TrunkSignalBlockFactory {
   }
 
   public List<TrunkSignalBlock> getBlocksFor(byte[] bytes) {
-    List<TrunkSignalBlock> blocks  = new LinkedList<>();
-    DeinterleaveTrellisDecoder   decoder = new DeinterleaveTrellisDecoder();
+    List<TrunkSignalBlock>     blocks  = new LinkedList<>();
+    DeinterleaveTrellisDecoder decoder = new DeinterleaveTrellisDecoder();
 
     for (int bit = 0; bit < (bytes.length * 8); bit += 196) {
       int[]  bits196 = Util.toBinaryIntArray(bytes, bit, 196);

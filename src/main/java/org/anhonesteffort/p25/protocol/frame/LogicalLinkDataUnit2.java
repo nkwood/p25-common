@@ -22,10 +22,10 @@ import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
 
 public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
 
-  private final byte[]          messageIndicator;
-  private final int             algorithmId;
-  private final int             keyId;
-  private final boolean         intact;
+  private final byte[]  messageIndicator;
+  private final int     algorithmId;
+  private final int     keyId;
+  private final boolean intact;
 
   public LogicalLinkDataUnit2(Nid nid, DiBitByteBufferSink sink) {
     super(nid, sink);
