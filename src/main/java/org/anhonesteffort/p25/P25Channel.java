@@ -18,8 +18,8 @@
 package org.anhonesteffort.p25;
 
 import org.anhonesteffort.dsp.ComplexNumber;
+import org.anhonesteffort.dsp.ConcurrentSource;
 import org.anhonesteffort.dsp.Sink;
-import org.anhonesteffort.dsp.Source;
 import org.anhonesteffort.dsp.StreamInterruptedException;
 import org.anhonesteffort.dsp.filter.ComplexNumberFrequencyTranslatingFilter;
 import org.anhonesteffort.dsp.filter.ComplexNumberMovingGainControl;
@@ -42,15 +42,14 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
-    implements DynamicSink<Samples>, Supplier<List<ComplexNumber>>, Callable<Void>
+public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
+    implements DynamicSink<Samples>, Supplier<List<ComplexNumber>>
 {
 
   private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
@@ -91,8 +90,8 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     if (Math.abs(sourceRate - P25Config.SAMPLE_RATE) > config.getMaxRateDiff()) {
       resampling  = Optional.of(FilterFactory.getCicResampler(sourceRate, P25Config.SAMPLE_RATE, config.getMaxRateDiff()));
       channelRate = (long) (sourceRate * resampling.get().getRateChange());
-      log.info(spec + " interpolation: " + resampling.get().getInterpolation() + ", " +
-                      "decimation: "    + resampling.get().getDecimation());
+      log.info(spec + " interpolation: " + resampling.get().getInterpolation() + "," +
+                      " decimation: "    + resampling.get().getDecimation());
     } else {
       resampling  = Optional.empty();
       channelRate = sourceRate;
