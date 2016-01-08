@@ -22,6 +22,8 @@ import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.p25.protocol.DiBit;
 import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
 
+import java.nio.ByteBuffer;
+
 public class DataUnit implements Copyable<DataUnit>, Sink<DiBit> {
 
   protected final Nid                 nid;
@@ -46,6 +48,10 @@ public class DataUnit implements Copyable<DataUnit>, Sink<DiBit> {
 
   public boolean isIntact() {
     return false;
+  }
+
+  public ByteBuffer getBytes() {
+    return sink.getBytes();
   }
 
   @Override
