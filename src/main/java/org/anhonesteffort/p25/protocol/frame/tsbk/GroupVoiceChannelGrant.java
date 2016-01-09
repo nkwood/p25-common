@@ -19,22 +19,22 @@ package org.anhonesteffort.p25.protocol.frame.tsbk;
 
 public class GroupVoiceChannelGrant extends ChannelGrantBlock {
 
-  private final int groupAddress;
-  private final int sourceAddress;
+  private final int groupId;
+  private final int sourceId;
 
   public GroupVoiceChannelGrant(int[] bytes12) {
     super(bytes12);
 
-    groupAddress  = (bytes12[5] << 8)  + bytes12[6];
-    sourceAddress = (bytes12[7] << 16) + (bytes12[8] << 8) + bytes12[9];
+    groupId  = (bytes12[5] << 8)  + bytes12[6];
+    sourceId = (bytes12[7] << 16) + (bytes12[8] << 8) + bytes12[9];
   }
 
-  public int getGroupAddress() {
-    return groupAddress;
+  public int getGroupId() {
+    return groupId;
   }
 
-  public int getSourceAddress() {
-    return sourceAddress;
+  public int getSourceId() {
+    return sourceId;
   }
 
   @Override
