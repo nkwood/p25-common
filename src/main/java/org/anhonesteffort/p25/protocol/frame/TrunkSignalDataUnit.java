@@ -72,17 +72,14 @@ public class TrunkSignalDataUnit extends DataUnit {
   public String toString() {
     StringBuilder builder = new StringBuilder();
 
-    builder.append("[nid: ");
-    builder.append(nid.toString());
-    builder.append(", intact: ");
-    builder.append(intact);
+    builder.append(super.toString());
     builder.append(", blocks: [");
 
     blocks.forEach(block -> {
       builder.append(block);
       builder.append(", ");
     });
-    builder.append("]]");
+    builder.append("]");
 
     return builder.toString();
   }

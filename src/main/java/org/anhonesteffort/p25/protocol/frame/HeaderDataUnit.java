@@ -111,11 +111,10 @@ public class HeaderDataUnit extends DataUnit {
 
   @Override
   public String toString() {
-    return "[nid: "   + nid.toString() + ", " +
-           "intact: " + intact         + ", " +
-           "alg: "    + algorithmId    + ", " +
-           "tgid: "   + talkGroupId    + ", " +
-           "mfid: "   + manufacturerId + "]";
+    return super.toString()       + ", " +
+           "alg: "  + algorithmId + ", " +
+           "tgid: " + talkGroupId + ", " +
+           "mfid: " + manufacturerId;
   }
 
 }

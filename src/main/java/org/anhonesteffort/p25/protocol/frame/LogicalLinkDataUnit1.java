@@ -69,9 +69,7 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
 
   @Override
   public String toString() {
-    return "[nid: "   + nid.toString()             + ", " +
-           "intact: " + intact                     + ", " +
-           "link: "   + linkControlWord.toString() + "] ";
+    return super.toString() + ", link: "   + linkControlWord.toString();
   }
 
 }

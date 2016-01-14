@@ -55,4 +55,9 @@ public class DataUnit implements Copyable<DataUnit> {
     return new DataUnit(nid, copyBuffer());
   }
 
+  @Override
+  public String toString() {
+    return "nid: " + nid.toString() + ", intact: " + isIntact();
+  }
+
 }
