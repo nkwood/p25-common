@@ -20,7 +20,9 @@ package org.anhonesteffort.p25.protocol.frame;
 import org.anhonesteffort.dsp.util.Util;
 import org.anhonesteffort.p25.ecc.Golay_17_6_8;
 import org.anhonesteffort.p25.ecc.ReedSolomon_36_20_17;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
+
+import java.nio.ByteBuffer;
 
 public class HeaderDataUnit extends DataUnit {
 
@@ -31,16 +33,15 @@ public class HeaderDataUnit extends DataUnit {
   private final int     talkGroupId;
   private final boolean intact;
 
-  public HeaderDataUnit(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public HeaderDataUnit(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
 
     Golay_17_6_8 golay    = new Golay_17_6_8();
-    byte[]       bytes    = sink.getBytes().array();
     int[]        hexBits  = new int[36];
     int          hexCount = 0;
 
     for (int i = 0; i < 648; i += 18) {
-      int   codeword18    = Util.bytesToInt(bytes, i, 18);
+      int   codeword18    = Util.bytesToInt(buffer.array(), i, 18);
       int[] golayResult   = golay.decode(codeword18 >> 1);
       hexBits[hexCount++] = golayResult[1];
     }
@@ -56,16 +57,16 @@ public class HeaderDataUnit extends DataUnit {
     intact           = rsResult >= 0;
   }
 
-  private HeaderDataUnit(Nid                 nid,
-                         DiBitByteBufferSink sink,
-                         byte[]              messageIndicator,
-                         int                 manufacturerId,
-                         int                 algorithmId,
-                         int                 keyId,
-                         int                 talkGroupId,
-                         boolean             intact)
+  protected HeaderDataUnit(Nid        nid,
+                           ByteBuffer buffer,
+                           byte[]     messageIndicator,
+                           int        manufacturerId,
+                           int        algorithmId,
+                           int        keyId,
+                           int        talkGroupId,
+                           boolean    intact)
   {
-    super(nid, sink);
+    super(nid, buffer);
 
     this.messageIndicator = messageIndicator;
     this.manufacturerId   = manufacturerId;
@@ -101,9 +102,10 @@ public class HeaderDataUnit extends DataUnit {
   }
 
   @Override
-  public DataUnit copy() {
+  public HeaderDataUnit copy() {
     return new HeaderDataUnit(
-        nid, sink.copy(), messageIndicator, manufacturerId, algorithmId, keyId, talkGroupId, intact
+        nid, copyBuffer(),
+        messageIndicator, manufacturerId, algorithmId, keyId, talkGroupId, intact
     );
   }
 

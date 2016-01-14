@@ -17,10 +17,11 @@
 
 package org.anhonesteffort.p25.protocol.frame;
 
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
 import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlock;
 import org.anhonesteffort.p25.protocol.frame.tsbk.TrunkSignalBlockFactory;
 
+import java.nio.ByteBuffer;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,19 +30,19 @@ public class TrunkSignalDataUnit extends DataUnit {
   private final List<TrunkSignalBlock> blocks;
   private final boolean                intact;
 
-  public TrunkSignalDataUnit(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public TrunkSignalDataUnit(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
 
-    blocks = new TrunkSignalBlockFactory().getBlocksFor(sink.getBytes().array());
+    blocks = new TrunkSignalBlockFactory().getBlocksFor(buffer.array());
     intact = blocks.size() > 0;
   }
 
-  private TrunkSignalDataUnit(Nid                     nid,
-                              DiBitByteBufferSink    sink,
-                              List<TrunkSignalBlock> blocks,
-                              boolean                intact)
+  protected TrunkSignalDataUnit(Nid                    nid,
+                                ByteBuffer             buffer,
+                                List<TrunkSignalBlock> blocks,
+                                boolean                intact)
   {
-    super(nid, sink);
+    super(nid, buffer);
 
     this.blocks = blocks;
     this.intact = intact;
@@ -64,7 +65,7 @@ public class TrunkSignalDataUnit extends DataUnit {
 
   @Override
   public TrunkSignalDataUnit copy() {
-    return new TrunkSignalDataUnit(nid, sink.copy(), blocks, intact);
+    return new TrunkSignalDataUnit(nid, copyBuffer(), blocks, intact);
   }
 
   @Override

@@ -32,7 +32,7 @@ import org.anhonesteffort.dsp.sample.Samples;
 import org.anhonesteffort.p25.filter.decode.QpskPolarSlicer;
 import org.anhonesteffort.p25.filter.demod.ComplexNumberCqpskDemodulator;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
-import org.anhonesteffort.p25.protocol.frame.DataUnitFramer;
+import org.anhonesteffort.p25.protocol.DataUnitFramer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

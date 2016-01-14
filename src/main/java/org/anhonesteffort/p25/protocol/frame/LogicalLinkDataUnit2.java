@@ -18,7 +18,9 @@
 package org.anhonesteffort.p25.protocol.frame;
 
 import org.anhonesteffort.p25.ecc.ReedSolomon_24_16_9;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
+
+import java.nio.ByteBuffer;
 
 public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
 
@@ -27,8 +29,8 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
   private final int     keyId;
   private final boolean intact;
 
-  public LogicalLinkDataUnit2(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public LogicalLinkDataUnit2(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
 
     ReedSolomon_24_16_9 reedSolomon = new ReedSolomon_24_16_9();
     int                 rsResult    = reedSolomon.decode(rsHexbits24);
@@ -39,15 +41,15 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
     intact           = rsResult >= 0;
   }
 
-  private LogicalLinkDataUnit2(Nid                 nid,
-                               DiBitByteBufferSink sink,
-                               byte[][]            voiceCodeWords,
-                               byte[]              messageIndicator,
-                               int                 algorithmId,
-                               int                 keyId,
-                               boolean             intact)
+  protected LogicalLinkDataUnit2(Nid        nid,
+                                 ByteBuffer buffer,
+                                 byte[][]   voiceCodeWords,
+                                 byte[]     messageIndicator,
+                                 int        algorithmId,
+                                 int        keyId,
+                                 boolean    intact)
   {
-    super(nid, sink, voiceCodeWords);
+    super(nid, buffer, voiceCodeWords);
 
     this.messageIndicator = messageIndicator;
     this.algorithmId      = algorithmId;
@@ -73,9 +75,9 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
   }
 
   @Override
-  public DataUnit copy() {
+  public LogicalLinkDataUnit2 copy() {
     return new LogicalLinkDataUnit2(
-        nid, sink.copy(), voiceCodeWords, messageIndicator, algorithmId, keyId, intact
+        nid, copyBuffer(), voiceCodeWords, messageIndicator, algorithmId, keyId, intact
     );
   }
 

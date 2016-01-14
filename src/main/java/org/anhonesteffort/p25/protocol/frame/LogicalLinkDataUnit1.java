@@ -18,17 +18,19 @@
 package org.anhonesteffort.p25.protocol.frame;
 
 import org.anhonesteffort.p25.ecc.ReedSolomon_24_12_13;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
 import org.anhonesteffort.p25.protocol.frame.linkcontrol.LinkControlWord;
 import org.anhonesteffort.p25.protocol.frame.linkcontrol.LinkControlWordFactory;
+
+import java.nio.ByteBuffer;
 
 public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
 
   private final LinkControlWord linkControlWord;
   private final boolean         intact;
 
-  public LogicalLinkDataUnit1(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public LogicalLinkDataUnit1(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
 
     ReedSolomon_24_12_13 reedSolomon = new ReedSolomon_24_12_13();
     int                  rsResult    = reedSolomon.decode(rsHexbits24);
@@ -37,13 +39,13 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
     intact          = rsResult >= 0;
   }
 
-  private LogicalLinkDataUnit1(Nid                 nid,
-                               DiBitByteBufferSink sink,
-                               byte[][]            voiceCodeWords,
-                               LinkControlWord     linkControlWord,
-                               boolean             intact)
+  protected LogicalLinkDataUnit1(Nid             nid,
+                                 ByteBuffer      buffer,
+                                 byte[][]        voiceCodeWords,
+                                 LinkControlWord linkControlWord,
+                                 boolean         intact)
   {
-    super(nid, sink, voiceCodeWords);
+    super(nid, buffer, voiceCodeWords);
 
     this.linkControlWord = linkControlWord;
     this.intact          = intact;
@@ -59,9 +61,9 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
   }
 
   @Override
-  public DataUnit copy() {
+  public LogicalLinkDataUnit1 copy() {
     return new LogicalLinkDataUnit1(
-        nid, sink.copy(), voiceCodeWords, linkControlWord, intact
+        nid, copyBuffer(), voiceCodeWords, linkControlWord, intact
     );
   }
 

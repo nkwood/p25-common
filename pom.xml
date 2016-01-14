@@ -25,7 +25,7 @@
 
     <groupId>org.anhonesteffort.p25</groupId>
     <artifactId>p25-common</artifactId>
-    <version>0.1.8</version>
+    <version>0.2.0</version>
 
     <repositories>
         <repository>

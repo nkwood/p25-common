@@ -19,8 +19,9 @@ package org.anhonesteffort.p25.protocol.frame;
 
 import org.anhonesteffort.dsp.util.Util;
 import org.anhonesteffort.p25.ecc.Hamming_10_6_3;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
 
+import java.nio.ByteBuffer;
 import java.util.BitSet;
 import java.util.stream.IntStream;
 
@@ -33,14 +34,14 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
   protected final int[]    rsHexbits24;
   protected final byte[][] voiceCodeWords;
 
-  public LogicalLinkDataUnit(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public LogicalLinkDataUnit(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
 
     rsHexbits24    = new int[24];
     voiceCodeWords = new byte[9][];
 
     Hamming_10_6_3 hamming  = new Hamming_10_6_3();
-    byte[]         bytes    = sink.getBytes().array();
+    byte[]         bytes    = buffer.array();
     int            hexCount = 0;
 
     for (int i = 288; i < 1248; i += 184) {
@@ -67,8 +68,8 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
     // todo: parse low speed data
   }
 
-  protected LogicalLinkDataUnit(Nid nid, DiBitByteBufferSink sink, byte[][] voiceCodeWords) {
-    super(nid, sink);
+  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, byte[][] voiceCodeWords) {
+    super(nid, buffer);
     this.rsHexbits24    = null;
     this.voiceCodeWords = voiceCodeWords;
   }

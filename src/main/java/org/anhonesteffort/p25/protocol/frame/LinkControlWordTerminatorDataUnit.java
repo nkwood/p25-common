@@ -17,18 +17,20 @@
 
 package org.anhonesteffort.p25.protocol.frame;
 
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
+
+import java.nio.ByteBuffer;
 
 public class LinkControlWordTerminatorDataUnit extends DataUnit {
 
-  public LinkControlWordTerminatorDataUnit(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public LinkControlWordTerminatorDataUnit(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
     // todo: parse link control word
   }
 
   @Override
-  public DataUnit copy() {
-    return new LinkControlWordTerminatorDataUnit(nid, sink.copy());
+  public LinkControlWordTerminatorDataUnit copy() {
+    return new LinkControlWordTerminatorDataUnit(nid, copyBuffer());
   }
 
 }

@@ -18,50 +18,41 @@
 package org.anhonesteffort.p25.protocol.frame;
 
 import org.anhonesteffort.dsp.Copyable;
-import org.anhonesteffort.dsp.Sink;
-import org.anhonesteffort.p25.protocol.DiBit;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
 
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
-public class DataUnit implements Copyable<DataUnit>, Sink<DiBit> {
+public class DataUnit implements Copyable<DataUnit> {
 
-  protected final Nid                 nid;
-  protected final DiBitByteBufferSink sink;
+  protected final Nid        nid;
+  protected final ByteBuffer buffer;
 
-  protected DataUnit(Nid nid, DiBitByteBufferSink sink) {
-    this.nid  = nid;
-    this.sink = sink;
-  }
-
-  public DataUnit(Nid nid) {
-    this(nid, new DiBitByteBufferSink(nid.getDuid().getBitLength()));
+  public DataUnit(Nid nid, ByteBuffer buffer) {
+    this.nid    = nid;
+    this.buffer = buffer;
   }
 
   public Nid getNid() {
     return nid;
   }
 
-  public boolean isFull() {
-    return sink.isFull();
+  public ByteBuffer getBuffer() {
+    return buffer;
   }
 
   public boolean isIntact() {
     return false;
   }
 
-  public ByteBuffer getBytes() {
-    return sink.getBytes();
-  }
-
-  @Override
-  public void consume(DiBit element) {
-    sink.consume(element);
+  protected ByteBuffer copyBuffer() {
+    byte[] bytes = buffer.array();
+    return ByteBuffer.wrap(Arrays.copyOf(bytes, bytes.length));
   }
 
   @Override
   public DataUnit copy() {
-    return new DataUnit(nid, sink.copy());
+    return new DataUnit(nid, copyBuffer());
   }
 
 }

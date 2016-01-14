@@ -15,12 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame;
-
-import org.anhonesteffort.dsp.util.Util;
-import org.anhonesteffort.p25.ecc.BchDecoder;
-
-import java.util.stream.IntStream;
+package org.anhonesteffort.p25.protocol;
 
 public class Nid {
 
@@ -28,23 +23,10 @@ public class Nid {
   private final Duid    duid;
   private final boolean intact;
 
-  public Nid(int nac, Duid duid) {
+  public Nid(int nac, Duid duid, boolean intact) {
     this.nac    = nac;
     this.duid   = duid;
-    this.intact = true;
-  }
-
-  public Nid(byte[] eccBytes) {
-    BchDecoder decoder = new BchDecoder();
-    int[]      bits64  = Util.toBinaryIntArray(eccBytes, 0, 64);
-    int[]      rBits64 = new int[64];
-
-    IntStream.range(0, 64).forEach(i -> rBits64[i] = bits64[63 - i]);
-    intact = decoder.decode(rBits64) >= 0;
-    IntStream.range(0, 64).forEach(i -> bits64[i] = rBits64[63 - i]);
-
-    nac  = Util.binaryIntArrayToInt(bits64, 0, 12);
-    duid = new Duid(Util.binaryIntArrayToInt(bits64, 12, 4));
+    this.intact = intact;
   }
 
   public int getNac() {

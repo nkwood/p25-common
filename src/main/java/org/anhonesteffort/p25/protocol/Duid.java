@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame;
+package org.anhonesteffort.p25.protocol;
 
 public class Duid {
 

@@ -17,17 +17,19 @@
 
 package org.anhonesteffort.p25.protocol.frame;
 
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
+import org.anhonesteffort.p25.protocol.Nid;
+
+import java.nio.ByteBuffer;
 
 public class SimpleTerminatorDataUnit extends DataUnit {
 
-  public SimpleTerminatorDataUnit(Nid nid, DiBitByteBufferSink sink) {
-    super(nid, sink);
+  public SimpleTerminatorDataUnit(Nid nid, ByteBuffer buffer) {
+    super(nid, buffer);
   }
 
   @Override
-  public DataUnit copy() {
-    return new SimpleTerminatorDataUnit(nid, sink.copy());
+  public SimpleTerminatorDataUnit copy() {
+    return new SimpleTerminatorDataUnit(nid, copyBuffer());
   }
 
 }

@@ -15,19 +15,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame;
+package org.anhonesteffort.p25.protocol;
 
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.dsp.Source;
 import org.anhonesteffort.p25.filter.demod.ComplexNumberCqpskDemodulator;
 import org.anhonesteffort.p25.filter.gate.DiBitSyncGate;
 import org.anhonesteffort.p25.filter.gate.SyncGateSink;
-import org.anhonesteffort.p25.protocol.DiBit;
-import org.anhonesteffort.p25.protocol.DiBitByteBufferSink;
 import org.anhonesteffort.p25.P25Config;
+import org.anhonesteffort.p25.protocol.frame.DataUnit;
+import org.anhonesteffort.p25.protocol.frame.HeaderDataUnit;
+import org.anhonesteffort.p25.protocol.frame.LinkControlWordTerminatorDataUnit;
+import org.anhonesteffort.p25.protocol.frame.LogicalLinkDataUnit1;
+import org.anhonesteffort.p25.protocol.frame.LogicalLinkDataUnit2;
+import org.anhonesteffort.p25.protocol.frame.SimpleTerminatorDataUnit;
+import org.anhonesteffort.p25.protocol.frame.TrunkSignalDataUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.ByteBuffer;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +44,7 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
 
   private static final int SYNC_HAMMING_DISTANCE = 2;
 
+  private final NidDecoder          nidDecoder     = new NidDecoder();
   private final List<DiBitSyncGate> syncGates      = new LinkedList<>();
   private final List<DiBitSyncGate> cqpskSyncGates = new LinkedList<>();
   private final Optional<ComplexNumberCqpskDemodulator> cqpsk;
@@ -116,52 +123,55 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
     syncGates.remove(sourceGate);
   }
 
-  private void onDataUnitComplete(DiBitSyncGate sourceGate, DataUnit dataUnit) {
+  private void onDataUnitComplete(DiBitSyncGate sourceGate, Nid nid, ByteBuffer buffer) {
     if ((++duCount % 10) == 0)
-      log.debug("on data unit complete: " + duCount + ", " + dataUnit.getNid());
+      log.debug("on data unit complete: " + duCount + ", " + nid);
 
     syncGates.remove(sourceGate);
 
-    switch (dataUnit.getNid().getDuid().getId()) {
+    switch (nid.getDuid().getId()) {
       case Duid.ID_HEADER:
-        broadcast(new HeaderDataUnit(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new HeaderDataUnit(nid, buffer));
         break;
 
       case Duid.ID_TERMINATOR_WO_LINK:
-        broadcast(new SimpleTerminatorDataUnit(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new SimpleTerminatorDataUnit(nid, buffer));
         break;
 
       case Duid.ID_LLDU1:
-        broadcast(new LogicalLinkDataUnit1(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new LogicalLinkDataUnit1(nid, buffer));
         break;
 
       case Duid.ID_TRUNK_SIGNALING:
-        broadcast(new TrunkSignalDataUnit(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new TrunkSignalDataUnit(nid, buffer));
         break;
 
       case Duid.ID_LLDU2:
-        broadcast(new LogicalLinkDataUnit2(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new LogicalLinkDataUnit2(nid, buffer));
         break;
 
       case Duid.ID_TERMINATOR_W_LINK:
-        broadcast(new LinkControlWordTerminatorDataUnit(dataUnit.getNid(), dataUnit.sink));
+        broadcast(new LinkControlWordTerminatorDataUnit(nid, buffer));
         break;
 
       default:
-        broadcast(dataUnit);
+        broadcast(new DataUnit(nid, buffer));
     }
   }
 
   private class Framer implements SyncGateSink<DiBit> {
 
-    private final DiBitByteBufferSink nidSink = new DiBitByteBufferSink(P25Config.NID_LENGTH);
+    private final DiBitByteBufferSink nidSink;
     private final DiBitSyncGate       syncGate;
 
-    private DataUnit dataUnit;
-    private int statusSymbolCounter = 24;
+    private Integer             statusSymbolCounter;
+    private Nid                 nid;
+    private DiBitByteBufferSink dataUnitSink;
 
     public Framer(DiBitSyncGate syncGate) {
-      this.syncGate = syncGate;
+      this.syncGate       = syncGate;
+      nidSink             = new DiBitByteBufferSink(P25Config.NID_LENGTH);
+      statusSymbolCounter = 24;
     }
 
     @Override
@@ -179,18 +189,18 @@ public class DataUnitFramer extends Source<DataUnit, Sink<DataUnit>> implements 
       if (!nidSink.isFull()) {
         nidSink.consume(element);
         if (nidSink.isFull()) {
-          Nid nid = new Nid(nidSink.getBytes().array());
+          nid = nidDecoder.decode(nidSink.getBytes());
           if (nid.isIntact())
-            dataUnit = new DataUnit(nid);
+            dataUnitSink = new DiBitByteBufferSink(nid.getDuid().getBitLength());
           else
             DataUnitFramer.this.onNidCorrupt(syncGate);
         }
       }
 
-      else if (!dataUnit.isFull()) {
-        dataUnit.consume(element);
-        if (dataUnit.isFull())
-          DataUnitFramer.this.onDataUnitComplete(syncGate, dataUnit);
+      else if (!dataUnitSink.isFull()) {
+        dataUnitSink.consume(element);
+        if (dataUnitSink.isFull())
+          DataUnitFramer.this.onDataUnitComplete(syncGate, nid, dataUnitSink.getBytes());
       }
 
       statusSymbolCounter++;
