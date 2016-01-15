@@ -18,7 +18,6 @@
 package org.anhonesteffort.p25.audio;
 
 import org.anhonesteffort.dsp.Sink;
-import org.anhonesteffort.jmbe.JMBEAudioLibrary;
 import org.anhonesteffort.jmbe.iface.AudioConverter;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 import org.anhonesteffort.p25.protocol.Duid;
@@ -26,39 +25,33 @@ import org.anhonesteffort.p25.protocol.frame.LogicalLinkDataUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.SourceDataLine;
+import java.util.Optional;
 
 public class ImbeAudioOutput implements Sink<DataUnit> {
 
   private final static Logger log = LoggerFactory.getLogger(ImbeAudioOutput.class);
 
-  private static final String JMBE_CODEC = "IMBE";
-
-  private static final int SAMPLE_RATE       = 48000;
-  private static final int SAMPLE_BIT_LENGTH = 16;
-  private static final int FRAME_RATE        = SAMPLE_RATE;
-  private static final int FRAME_BYTE_LENGTH = SAMPLE_BIT_LENGTH / 8;
-  private static final int CHANNEL_COUNT     = 1;
-
-  private static final AudioFormat AUDIO_FORMAT = new AudioFormat(
-      AudioFormat.Encoding.PCM_SIGNED, SAMPLE_RATE, SAMPLE_BIT_LENGTH,
-      CHANNEL_COUNT, FRAME_BYTE_LENGTH, FRAME_RATE, false
-  );
-
   private final AudioConverter audioConverter;
   private final SourceDataLine output;
 
-  public ImbeAudioOutput() throws ReflectiveOperationException, LineUnavailableException {
-    audioConverter = new JMBEAudioLibrary().getAudioConverter(JMBE_CODEC, AUDIO_FORMAT);
+  public ImbeAudioOutput() throws ClassNotFoundException, LineUnavailableException {
+    ImbeConverterFactory     converterFactory = new ImbeConverterFactory();
+    Optional<AudioConverter> converter        = converterFactory.create();
 
-    if (audioConverter == null)
+    if (!converter.isPresent()) {
       throw new ClassNotFoundException("unable to instantiate jmbe audio converter");
+    } else {
+      audioConverter = converter.get();
+    }
 
-    output = AudioSystem.getSourceDataLine(AUDIO_FORMAT);
-    output.open(AUDIO_FORMAT, FRAME_RATE * FRAME_BYTE_LENGTH);
+    output = AudioSystem.getSourceDataLine(ImbeConverterFactory.AUDIO_FORMAT);
+    output.open(
+        ImbeConverterFactory.AUDIO_FORMAT,
+        (ImbeConverterFactory.FRAME_RATE * ImbeConverterFactory.FRAME_BYTE_LENGTH)
+    );
     output.start();
   }
 
