@@ -49,8 +49,8 @@ public class DiBitSyncGate extends SyncGate<DiBit> {
     if (bits == sync) {
       onSyncConsumed();
     } else if (Long.bitCount(bits ^ sync) <= hammingDistance) {
-        bits = sync;
-        onSyncConsumed();
+      bits = sync;
+      onSyncConsumed();
     }
   }
 
