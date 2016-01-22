@@ -153,10 +153,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   public void addSink(Sink<DataUnit> sink) {
     synchronized (processChainLock) {
       super.addSink(sink);
-
-      if (framer != null) {
-        framer.addSink(sink);
-      }
+      if (framer != null) { framer.addSink(sink); }
     }
   }
 
@@ -164,59 +161,60 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   public void removeSink(Sink<DataUnit> sink) {
     synchronized (processChainLock) {
       super.removeSink(sink);
-
-      if (framer != null) {
-        framer.removeSink(sink);
-      }
+      if (framer != null) { framer.removeSink(sink); }
     }
   }
 
   public void addFilterSpy(FilterType type, DynamicSink<ComplexNumber> sink) {
     synchronized (processChainLock) {
-      switch (type) {
-        case TRANSLATION:
-          freqTranslation.addSink(sink);
-          break;
-
-        case BASEBAND:
-          baseband.addSink(sink);
-          break;
-
-        case GAIN:
-          gainControl.addSink(sink);
-          break;
-
-        case DEMODULATION:
-          cqpskDemodulation.addSink(sink);
-          break;
-      }
-
       sink.onSourceStateChange(channelRate, 0d);
       spies.get(type).add(sink);
+
+      if (freqTranslation != null) {
+        switch (type) {
+          case TRANSLATION:
+            freqTranslation.addSink(sink);
+            break;
+
+          case BASEBAND:
+            baseband.addSink(sink);
+            break;
+
+          case GAIN:
+            gainControl.addSink(sink);
+            break;
+
+          case DEMODULATION:
+            cqpskDemodulation.addSink(sink);
+            break;
+        }
+      }
     }
   }
 
   public void removeFilterSpy(FilterType type, DynamicSink<ComplexNumber> sink) {
     synchronized (processChainLock) {
-      switch (type) {
-        case TRANSLATION:
-          freqTranslation.removeSink(sink);
-          break;
-
-        case BASEBAND:
-          baseband.removeSink(sink);
-          break;
-
-        case GAIN:
-          gainControl.removeSink(sink);
-          break;
-
-        case DEMODULATION:
-          cqpskDemodulation.removeSink(sink);
-          break;
-      }
-
       spies.get(type).remove(sink);
+
+      if (freqTranslation != null) {
+        switch (type) {
+          case TRANSLATION:
+            freqTranslation.removeSink(sink);
+            break;
+
+          case BASEBAND:
+            baseband.removeSink(sink);
+            break;
+
+          case GAIN:
+            gainControl.removeSink(sink);
+            break;
+
+          case DEMODULATION:
+            cqpskDemodulation.removeSink(sink);
+            break;
+        }
+      }
     }
   }
 
