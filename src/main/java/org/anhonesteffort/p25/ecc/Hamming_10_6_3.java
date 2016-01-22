@@ -34,7 +34,6 @@ public class Hamming_10_6_3 {
   };
 
   public int decode(int info, int parity) {
-    assert info <= 0x3F && parity <= 0x0F;
     return info ^ hmg1063DecTbl[hmg1063EncTbl[info] ^ parity];
   }
 

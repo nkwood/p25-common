@@ -26,8 +26,6 @@ public class ReedSolomon_24_12_13 {
   }
 
   public int decode(int[] coded24) {
-    assert coded24.length == 24;
-
     int[] coded63 = new int[63];
     for (int i = 0; i < 24; i++)
       coded63[39 + i] = coded24[i];

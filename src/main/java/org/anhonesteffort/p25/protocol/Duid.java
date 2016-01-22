@@ -31,7 +31,6 @@ public class Duid {
   private final int bitLength;
 
   public Duid(int id) {
-    assert id <= 0x0F && id >= 0x00;
     this.id = id;
 
     switch (id) {

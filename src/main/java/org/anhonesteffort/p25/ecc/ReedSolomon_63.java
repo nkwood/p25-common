@@ -53,8 +53,6 @@ public class ReedSolomon_63 {
   }
 
   private int decodeUnsafe(int nroots, int FirstInfo, int HB[]) {
-    assert HB.length == 63;
-
     int[] lambda = new int[18];
     int[] S      = new int[17];
     int[] b      = new int[18];
