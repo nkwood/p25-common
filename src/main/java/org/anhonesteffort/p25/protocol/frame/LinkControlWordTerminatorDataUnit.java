@@ -29,6 +29,11 @@ public class LinkControlWordTerminatorDataUnit extends DataUnit {
   }
 
   @Override
+  public boolean isIntact() {
+    return true;
+  }
+
+  @Override
   public LinkControlWordTerminatorDataUnit copy() {
     return new LinkControlWordTerminatorDataUnit(nid, copyBuffer());
   }

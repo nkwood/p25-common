@@ -28,6 +28,11 @@ public class SimpleTerminatorDataUnit extends DataUnit {
   }
 
   @Override
+  public boolean isIntact() {
+    return true;
+  }
+
+  @Override
   public SimpleTerminatorDataUnit copy() {
     return new SimpleTerminatorDataUnit(nid, copyBuffer());
   }
