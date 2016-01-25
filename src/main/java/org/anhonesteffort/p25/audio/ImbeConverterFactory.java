@@ -27,20 +27,25 @@ public class ImbeConverterFactory {
 
   public static final String JMBE_CODEC = "IMBE";
 
-  public static final int SAMPLE_RATE       = 48000;
+  public static final int SAMPLE_RATE_8khz  = 8000;
+  public static final int SAMPLE_RATE_48khz = 48000;
   public static final int SAMPLE_BIT_LENGTH = 16;
-  public static final int FRAME_RATE        = SAMPLE_RATE;
   public static final int FRAME_BYTE_LENGTH = SAMPLE_BIT_LENGTH / 8;
   public static final int CHANNEL_COUNT     = 1;
 
-  public static final AudioFormat AUDIO_FORMAT = new AudioFormat(
-      AudioFormat.Encoding.PCM_SIGNED, SAMPLE_RATE, SAMPLE_BIT_LENGTH,
-      CHANNEL_COUNT, FRAME_BYTE_LENGTH, FRAME_RATE, false
+  public static final AudioFormat AUDIO_FORMAT_8khz = new AudioFormat(
+      AudioFormat.Encoding.PCM_SIGNED, SAMPLE_RATE_8khz, SAMPLE_BIT_LENGTH,
+      CHANNEL_COUNT, FRAME_BYTE_LENGTH, SAMPLE_RATE_8khz, false
   );
 
-  public Optional<AudioConverter> create() {
+  public static final AudioFormat AUDIO_FORMAT_48khz = new AudioFormat(
+      AudioFormat.Encoding.PCM_SIGNED, SAMPLE_RATE_48khz, SAMPLE_BIT_LENGTH,
+      CHANNEL_COUNT, FRAME_BYTE_LENGTH, SAMPLE_RATE_48khz, false
+  );
+
+  public Optional<AudioConverter> create(AudioFormat format) {
     try {
-      return Optional.ofNullable(new JMBEAudioLibrary().getAudioConverter(JMBE_CODEC, AUDIO_FORMAT));
+      return Optional.ofNullable(new JMBEAudioLibrary().getAudioConverter(JMBE_CODEC, format));
     } catch (Exception e) {
       return Optional.empty();
     }

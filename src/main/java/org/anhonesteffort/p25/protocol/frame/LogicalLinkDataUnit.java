@@ -52,7 +52,7 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
       }
     }
 
-    // todo: gross
+    // todo: gross, BitSet.valueOf(?)
     BitSet bitSet = new BitSet(bytes.length * 8);
     IntStream.range(0, bytes.length * 8)
              .filter(bit -> Util.bytesToInt(bytes, bit, 1) == 1)

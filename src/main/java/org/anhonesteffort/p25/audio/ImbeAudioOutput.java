@@ -40,7 +40,7 @@ public class ImbeAudioOutput implements Sink<DataUnit> {
 
   public ImbeAudioOutput() throws ClassNotFoundException, LineUnavailableException {
     ImbeConverterFactory     converterFactory = new ImbeConverterFactory();
-    Optional<AudioConverter> converter        = converterFactory.create();
+    Optional<AudioConverter> converter        = converterFactory.create(ImbeConverterFactory.AUDIO_FORMAT_48khz);
 
     if (!converter.isPresent()) {
       throw new ClassNotFoundException("unable to instantiate jmbe audio converter");
@@ -48,10 +48,10 @@ public class ImbeAudioOutput implements Sink<DataUnit> {
       audioConverter = converter.get();
     }
 
-    output = AudioSystem.getSourceDataLine(ImbeConverterFactory.AUDIO_FORMAT);
+    output = AudioSystem.getSourceDataLine(ImbeConverterFactory.AUDIO_FORMAT_48khz);
     output.open(
-        ImbeConverterFactory.AUDIO_FORMAT,
-        (ImbeConverterFactory.FRAME_RATE * ImbeConverterFactory.FRAME_BYTE_LENGTH)
+        ImbeConverterFactory.AUDIO_FORMAT_48khz,
+        (ImbeConverterFactory.SAMPLE_RATE_48khz * ImbeConverterFactory.FRAME_BYTE_LENGTH)
     );
     output.start();
   }
