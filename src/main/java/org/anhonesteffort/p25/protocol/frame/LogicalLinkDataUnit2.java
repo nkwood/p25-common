@@ -41,13 +41,13 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
     intact           = rsResult >= 0;
   }
 
-  protected LogicalLinkDataUnit2(Nid        nid,
-                                 ByteBuffer buffer,
-                                 byte[][]   voiceFrames,
-                                 byte[]     messageIndicator,
-                                 int        algorithmId,
-                                 int        keyId,
-                                 boolean    intact)
+  protected LogicalLinkDataUnit2(Nid          nid,
+                                 ByteBuffer   buffer,
+                                 VoiceFrame[] voiceFrames,
+                                 byte[]       messageIndicator,
+                                 int          algorithmId,
+                                 int          keyId,
+                                 boolean      intact)
   {
     super(nid, buffer, voiceFrames);
 

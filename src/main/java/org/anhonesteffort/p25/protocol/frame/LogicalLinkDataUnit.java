@@ -31,18 +31,16 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
       0, 144, 328, 512, 696, 880, 1064, 1248, 1424
   };
 
-  protected final int[]    rsHexbits24;
-  protected final byte[][] voiceFrames;
+  protected final int[]        rsHexbits24;
+  protected final VoiceFrame[] voiceFrames;
 
   public LogicalLinkDataUnit(Nid nid, ByteBuffer buffer) {
     super(nid, buffer);
 
-    rsHexbits24 = new int[24];
-    voiceFrames = new byte[9][];
-
-    Hamming_10_6_3 hamming  = new Hamming_10_6_3();
-    byte[]         bytes    = buffer.array();
-    int            hexCount = 0;
+    Hamming_10_6_3 hamming     = new Hamming_10_6_3();
+    byte[]         bytes       = buffer.array();
+    int            hexCount    = 0;
+                   rsHexbits24 = new int[24];
 
     for (int i = 288; i < 1248; i += 184) {
       for (int j = 0; j < 40; j += 10) {
@@ -61,20 +59,22 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
              .forEach(bitSet::set);
 
     int voiceFrameCount = 0;
+        voiceFrames     = new VoiceFrame[9];
+
     for (int bitIndex : VOICE_FRAME_INDEXES) {
-      voiceFrames[voiceFrameCount++] = bitSet.get(bitIndex, bitIndex + 144).toByteArray();
+      voiceFrames[voiceFrameCount++] = new VoiceFrame(bitSet.get(bitIndex, bitIndex + 144).toByteArray());
     }
 
     // todo: parse low speed data
   }
 
-  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, byte[][] voiceFrames) {
+  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, VoiceFrame[] voiceFrames) {
     super(nid, buffer);
     this.rsHexbits24 = null;
     this.voiceFrames = voiceFrames;
   }
 
-  public byte[][] getVoiceFrames() {
+  public VoiceFrame[] getVoiceFrames() {
     return voiceFrames;
   }
 

@@ -41,7 +41,7 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
 
   protected LogicalLinkDataUnit1(Nid             nid,
                                  ByteBuffer      buffer,
-                                 byte[][]        voiceFrames,
+                                 VoiceFrame[]    voiceFrames,
                                  LinkControlWord linkControlWord,
                                  boolean         intact)
   {
