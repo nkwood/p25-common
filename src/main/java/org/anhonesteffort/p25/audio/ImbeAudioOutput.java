@@ -66,7 +66,7 @@ public class ImbeAudioOutput implements Sink<DataUnit> {
           return;
         }
 
-        for (byte[] codeWord : lldu.getVoiceCodeWords()) {
+        for (byte[] codeWord : lldu.getVoiceFrames()) {
           byte[] audio = audioConverter.convert(codeWord);
           output.write(audio, 0, audio.length);
         }

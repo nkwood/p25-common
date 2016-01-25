@@ -27,18 +27,18 @@ import java.util.stream.IntStream;
 
 public abstract class LogicalLinkDataUnit extends DataUnit {
 
-  private static final int[] VOICE_CODE_WORD_INDEXES = new int[] {
+  private static final int[] VOICE_FRAME_INDEXES = new int[] {
       0, 144, 328, 512, 696, 880, 1064, 1248, 1424
   };
 
   protected final int[]    rsHexbits24;
-  protected final byte[][] voiceCodeWords;
+  protected final byte[][] voiceFrames;
 
   public LogicalLinkDataUnit(Nid nid, ByteBuffer buffer) {
     super(nid, buffer);
 
-    rsHexbits24    = new int[24];
-    voiceCodeWords = new byte[9][];
+    rsHexbits24 = new int[24];
+    voiceFrames = new byte[9][];
 
     Hamming_10_6_3 hamming  = new Hamming_10_6_3();
     byte[]         bytes    = buffer.array();
@@ -60,22 +60,22 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
              .filter(bit -> Util.bytesToInt(bytes, bit, 1) == 1)
              .forEach(bitSet::set);
 
-    int voiceCwCount = 0;
-    for (int bitIndex : VOICE_CODE_WORD_INDEXES) {
-      voiceCodeWords[voiceCwCount++] = bitSet.get(bitIndex, bitIndex + 144).toByteArray();
+    int voiceFrameCount = 0;
+    for (int bitIndex : VOICE_FRAME_INDEXES) {
+      voiceFrames[voiceFrameCount++] = bitSet.get(bitIndex, bitIndex + 144).toByteArray();
     }
 
     // todo: parse low speed data
   }
 
-  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, byte[][] voiceCodeWords) {
+  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, byte[][] voiceFrames) {
     super(nid, buffer);
-    this.rsHexbits24    = null;
-    this.voiceCodeWords = voiceCodeWords;
+    this.rsHexbits24 = null;
+    this.voiceFrames = voiceFrames;
   }
 
-  public byte[][] getVoiceCodeWords() {
-    return voiceCodeWords;
+  public byte[][] getVoiceFrames() {
+    return voiceFrames;
   }
 
 }

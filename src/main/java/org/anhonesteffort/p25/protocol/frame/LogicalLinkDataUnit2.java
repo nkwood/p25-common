@@ -43,13 +43,13 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
 
   protected LogicalLinkDataUnit2(Nid        nid,
                                  ByteBuffer buffer,
-                                 byte[][]   voiceCodeWords,
+                                 byte[][]   voiceFrames,
                                  byte[]     messageIndicator,
                                  int        algorithmId,
                                  int        keyId,
                                  boolean    intact)
   {
-    super(nid, buffer, voiceCodeWords);
+    super(nid, buffer, voiceFrames);
 
     this.messageIndicator = messageIndicator;
     this.algorithmId      = algorithmId;
@@ -77,7 +77,7 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
   @Override
   public LogicalLinkDataUnit2 copy() {
     return new LogicalLinkDataUnit2(
-        nid, copyBuffer(), voiceCodeWords, messageIndicator, algorithmId, keyId, intact
+        nid, copyBuffer(), voiceFrames, messageIndicator, algorithmId, keyId, intact
     );
   }
 
