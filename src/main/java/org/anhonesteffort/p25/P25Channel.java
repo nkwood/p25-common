@@ -55,7 +55,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
 
   private final Map<FilterType, List<DynamicSink<ComplexNumber>>> spies = new HashMap<>();
-  private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue = new LinkedBlockingQueue<>(10);
+  private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue;
   private final Object processChainLock = new Object();
   private final P25Config config;
   private final P25ChannelSpec spec;
@@ -71,9 +71,11 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
     TRANSLATION, BASEBAND, GAIN, DEMODULATION
   }
 
-  public P25Channel(P25Config config, P25ChannelSpec spec) {
-    this.config = config;
-    this.spec   = spec;
+  public P25Channel(P25Config config, P25ChannelSpec spec, int sampleQueueSize) {
+    this.config   = config;
+    this.spec     = spec;
+    iqSampleQueue = new LinkedBlockingQueue<>(sampleQueueSize);
+
     spies.put(FilterType.TRANSLATION,  new LinkedList<>());
     spies.put(FilterType.BASEBAND,     new LinkedList<>());
     spies.put(FilterType.GAIN,         new LinkedList<>());
