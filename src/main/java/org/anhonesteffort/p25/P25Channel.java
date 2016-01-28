@@ -37,10 +37,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.nio.FloatBuffer;
-import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
@@ -54,32 +51,19 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
 
   private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
 
-  private final Map<FilterType, List<DynamicSink<ComplexNumber>>> spies = new HashMap<>();
-  private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue;
-  private final Object processChainLock = new Object();
   private final P25Config config;
   private final P25ChannelSpec spec;
+  private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue;
 
-  private Filter<ComplexNumber>         freqTranslation;
-  private Filter<ComplexNumber>         baseband;
-  private Filter<ComplexNumber>         gainControl;
-  private ComplexNumberCqpskDemodulator cqpskDemodulation;
-  private DataUnitFramer                framer;
-  private Long                          channelRate = -1l;
+  private volatile Filter<ComplexNumber> freqTranslation = new NoOpComplexNumberFilter();
+  private volatile DataUnitFramer        framer          = new DataUnitFramer(Optional.empty());
 
-  public enum FilterType {
-    TRANSLATION, BASEBAND, GAIN, DEMODULATION
-  }
+  private Long channelRate = -1l;
 
   public P25Channel(P25Config config, P25ChannelSpec spec, int sampleQueueSize) {
     this.config   = config;
     this.spec     = spec;
     iqSampleQueue = new LinkedBlockingQueue<>(sampleQueueSize);
-
-    spies.put(FilterType.TRANSLATION,  new LinkedList<>());
-    spies.put(FilterType.BASEBAND,     new LinkedList<>());
-    spies.put(FilterType.GAIN,         new LinkedList<>());
-    spies.put(FilterType.DEMODULATION, new LinkedList<>());
   }
 
   public P25ChannelSpec getSpec() {
@@ -113,111 +97,41 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
 
   @Override
   public void onSourceStateChange(Long sampleRate, Double frequency) {
-    synchronized (processChainLock) {
-      Optional<RateChangeFilter<ComplexNumber>> resampling = initResampling(sampleRate);
-      QpskPolarSlicer                           slicer     = new QpskPolarSlicer();
+    Optional<RateChangeFilter<ComplexNumber>> resampling        = initResampling(sampleRate);
+    Filter<ComplexNumber>                     baseband          = FilterFactory.getKaiserBessel(channelRate, config.getPassbandStop(), config.getStopbandStart(), config.getAttenuation(), 1f);
+    Filter<ComplexNumber>                     gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / P25Config.SYMBOL_RATE));
+    ComplexNumberCqpskDemodulator             cqpskDemodulation = new ComplexNumberCqpskDemodulator(channelRate, P25Config.SYMBOL_RATE);
+    QpskPolarSlicer                           slicer            = new QpskPolarSlicer();
 
-      freqTranslation   = getFreqTranslation(sampleRate, frequency);
-      baseband          = FilterFactory.getKaiserBessel(channelRate, config.getPassbandStop(), config.getStopbandStart(), config.getAttenuation(), 1f);
-      gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / P25Config.SYMBOL_RATE));
-      cqpskDemodulation = new ComplexNumberCqpskDemodulator(channelRate, P25Config.SYMBOL_RATE);
-      framer            = new DataUnitFramer(Optional.of(cqpskDemodulation));
+    freqTranslation = getFreqTranslation(sampleRate, frequency);
+    framer          = new DataUnitFramer(Optional.of(cqpskDemodulation));
 
-      if (resampling.isPresent()) {
-        freqTranslation.addSink(resampling.get());
-        resampling.get().addSink(baseband);
-      } else {
-        freqTranslation.addSink(baseband);
-      }
-
-      baseband.addSink(gainControl);
-      gainControl.addSink(cqpskDemodulation);
-      cqpskDemodulation.addSink(slicer);
-      slicer.addSink(framer);
-
-      spies.get(FilterType.TRANSLATION).forEach(freqTranslation::addSink);
-      spies.get(FilterType.BASEBAND).forEach(baseband::addSink);
-      spies.get(FilterType.GAIN).forEach(gainControl::addSink);
-      spies.get(FilterType.DEMODULATION).forEach(cqpskDemodulation::addSink);
-
-      spies.keySet().forEach(
-          key -> spies.get(key).forEach(
-              sink -> sink.onSourceStateChange(channelRate, 0d)
-          )
-      );
-
-      sinks.forEach(framer::addSink);
-      iqSampleQueue.clear();
+    if (resampling.isPresent()) {
+      freqTranslation.addSink(resampling.get());
+      resampling.get().addSink(baseband);
+    } else {
+      freqTranslation.addSink(baseband);
     }
+
+    baseband.addSink(gainControl);
+    gainControl.addSink(cqpskDemodulation);
+    cqpskDemodulation.addSink(slicer);
+    slicer.addSink(framer);
+
+    sinks.forEach(framer::addSink);
+    iqSampleQueue.clear();
   }
 
   @Override
   public void addSink(Sink<DataUnit> sink) {
-    synchronized (processChainLock) {
-      super.addSink(sink);
-      if (framer != null) { framer.addSink(sink); }
-    }
+    super.addSink(sink);
+    framer.addSink(sink);
   }
 
   @Override
   public void removeSink(Sink<DataUnit> sink) {
-    synchronized (processChainLock) {
-      super.removeSink(sink);
-      if (framer != null) { framer.removeSink(sink); }
-    }
-  }
-
-  public void addFilterSpy(FilterType type, DynamicSink<ComplexNumber> sink) {
-    synchronized (processChainLock) {
-      sink.onSourceStateChange(channelRate, 0d);
-      spies.get(type).add(sink);
-
-      if (freqTranslation != null) {
-        switch (type) {
-          case TRANSLATION:
-            freqTranslation.addSink(sink);
-            break;
-
-          case BASEBAND:
-            baseband.addSink(sink);
-            break;
-
-          case GAIN:
-            gainControl.addSink(sink);
-            break;
-
-          case DEMODULATION:
-            cqpskDemodulation.addSink(sink);
-            break;
-        }
-      }
-    }
-  }
-
-  public void removeFilterSpy(FilterType type, DynamicSink<ComplexNumber> sink) {
-    synchronized (processChainLock) {
-      spies.get(type).remove(sink);
-
-      if (freqTranslation != null) {
-        switch (type) {
-          case TRANSLATION:
-            freqTranslation.removeSink(sink);
-            break;
-
-          case BASEBAND:
-            baseband.removeSink(sink);
-            break;
-
-          case GAIN:
-            gainControl.removeSink(sink);
-            break;
-
-          case DEMODULATION:
-            cqpskDemodulation.removeSink(sink);
-            break;
-        }
-      }
-    }
+    super.removeSink(sink);
+    framer.removeSink(sink);
   }
 
   @Override
@@ -248,11 +162,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   public Void call() {
     try {
 
-      Stream.generate(this).forEach(samples -> {
-        synchronized (processChainLock) {
-          samples.forEach(freqTranslation::consume);
-        }
-      });
+      Stream.generate(this).forEach(samples -> samples.forEach(freqTranslation::consume));
 
     } catch (StreamInterruptedException e) {
       log.debug(spec + " interrupted, assuming execution was canceled");
