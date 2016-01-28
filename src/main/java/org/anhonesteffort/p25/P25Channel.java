@@ -225,7 +225,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
     if (!iqSampleQueue.offer(samples.getSamples())) {
       iqSampleQueue.clear();
       iqSampleQueue.offer(samples.getSamples());
-      log.warn(spec + " sample queue for channel has overflowed");
+      log.error(spec + " sample queue for channel has overflowed");
     }
   }
 
@@ -249,9 +249,6 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
     try {
 
       Stream.generate(this).forEach(samples -> {
-        if (Thread.currentThread().isInterrupted())
-          throw new StreamInterruptedException("interrupted while reading from ComplexNumber stream");
-
         synchronized (processChainLock) {
           samples.forEach(freqTranslation::consume);
         }
