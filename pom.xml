@@ -25,7 +25,7 @@
 
     <groupId>org.anhonesteffort.p25</groupId>
     <artifactId>p25-common</artifactId>
-    <version>0.2.7</version>
+    <version>0.2.8</version>
 
     <repositories>
         <repository>
@@ -55,7 +55,7 @@
         <dependency>
             <groupId>org.anhonesteffort.jmbe</groupId>
             <artifactId>jmbe</artifactId>
-            <version>0.3.3</version>
+            <version>0.3.4</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
