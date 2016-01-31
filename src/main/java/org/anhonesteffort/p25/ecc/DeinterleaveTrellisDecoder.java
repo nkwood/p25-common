@@ -23,7 +23,7 @@ package org.anhonesteffort.p25.ecc;
 
 public class DeinterleaveTrellisDecoder {
 
-  private static int[] deinterleave_tb = new int[] {
+  private static final int[] deinterleave_tb = new int[] {
       0,  1,  2,  3,  52, 53, 54, 55, 100,101,102,103, 148,149,150,151,
       4,  5,  6,  7,  56, 57, 58, 59, 104,105,106,107, 152,153,154,155,
       8,  9, 10, 11,  60, 61, 62, 63, 108,109,110,111, 156,157,158,159,
@@ -39,7 +39,7 @@ public class DeinterleaveTrellisDecoder {
       48, 49, 50, 51
   };
 
-  private static byte[][] next_words = new byte[][] {
+  private static final byte[][] next_words = new byte[][] {
     {0x2, 0xC, 0x1, 0xF},
     {0xE, 0x0, 0xD, 0x3},
     {0x9, 0x7, 0xA, 0x4},
