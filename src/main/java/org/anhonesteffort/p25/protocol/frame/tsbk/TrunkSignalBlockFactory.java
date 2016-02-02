@@ -48,6 +48,9 @@ public class TrunkSignalBlockFactory {
       case TrunkSignalBlock.NETWORK_STATUS:
         return new NetworkStatusBroadcastMessage(intBytes12);
 
+      case TrunkSignalBlock.ADJACENT_STATUS_BROADCAST:
+        return new AdjacentStatusBroadcastMessage(intBytes12);
+
       case TrunkSignalBlock.ID_UPDATE_NO_VUHF:
         return new IdUpdateNoVuhf(intBytes12);
 
