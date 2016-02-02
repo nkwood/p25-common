@@ -72,9 +72,9 @@ public class TrunkSignalBlockFactory {
         TrunkSignalBlock block = getBlockFor(bytes12);
         blocks.add(block);
 
-        if (!(block instanceof SingleTrunkSignalBlock)) {
-          break;
-        } else if (((SingleTrunkSignalBlock) block).isLast()) {
+        if ((block instanceof SingleTrunkSignalBlock) &&
+           ((SingleTrunkSignalBlock) block).isLast())
+        {
           break;
         }
 
