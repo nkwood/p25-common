@@ -63,7 +63,7 @@ public class TrunkSignalBlockFactory {
     List<TrunkSignalBlock>     blocks  = new LinkedList<>();
     DeinterleaveTrellisDecoder decoder = new DeinterleaveTrellisDecoder();
 
-    for (int bit = 0; bit < (bytes.length * 8); bit += 196) {
+    for (int bit = 0; (bit + 196) <= (bytes.length * 8); bit += 196) {
       int[]  bits196 = Util.toBinaryIntArray(bytes, bit, 196);
       byte[] bytes12 = new byte[12];
       int    result  = decoder.decode(bits196, bytes12);
