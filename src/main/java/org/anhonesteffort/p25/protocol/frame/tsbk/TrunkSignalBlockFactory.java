@@ -30,7 +30,7 @@ public class TrunkSignalBlockFactory {
 
   private static final Logger log = LoggerFactory.getLogger(TrunkSignalBlockFactory.class);
 
-  private TrunkSignalBlock getBlockFor(byte[] bytes12) {
+  private SingleTrunkSignalBlock getBlockFor(byte[] bytes12) {
     int[] intBytes12 = new int[12];
     IntStream.range(0, 12).forEach(i -> intBytes12[i] = (bytes12[i] & 0xFF));
     int opCode = intBytes12[0] & 0x3F;
@@ -55,7 +55,7 @@ public class TrunkSignalBlockFactory {
         return new IdUpdateNoVuhf(intBytes12);
 
       default:
-        return new TrunkSignalBlock(opCode);
+        return new SingleTrunkSignalBlock(intBytes12);
     }
   }
 
@@ -69,18 +69,14 @@ public class TrunkSignalBlockFactory {
       int    result  = decoder.decode(bits196, bytes12);
 
       if (result == 0) {
-        TrunkSignalBlock block = getBlockFor(bytes12);
+        SingleTrunkSignalBlock block = getBlockFor(bytes12);
         blocks.add(block);
 
-        if ((block instanceof SingleTrunkSignalBlock) &&
-           ((SingleTrunkSignalBlock) block).isLast())
-        {
+        if (block.isLast()) {
           break;
         }
-
       } else {
-        log.debug("unable to recover block #" + (bit / 196));
-        break;
+        log.debug("unable to recover block #" + (bit / 196) + ", result: " + result);
       }
     }
 
