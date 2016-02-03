@@ -21,14 +21,16 @@ import org.anhonesteffort.dsp.Copyable;
 
 public class TrunkSignalBlock implements Copyable<TrunkSignalBlock> {
 
-  public static final int GROUP_VOICE_CHAN_GRANT      = 0x00;
-  public static final int ID_UPDATE_VUHF              = 0x34;
-  public static final int SYSTEM_SERVICE_BROADCAST    = 0x38;
-  public static final int SECONDARY_CONTROL_BROADCAST = 0x39;
-  public static final int RFSS_STATUS_BROADCAST       = 0x3A;
-  public static final int NETWORK_STATUS              = 0x3B;
-  public static final int ADJACENT_STATUS_BROADCAST   = 0x3C;
-  public static final int ID_UPDATE_NO_VUHF           = 0x3D;
+  public static final int GROUP_VOICE_CHAN_GRANT                 = 0x00;
+  public static final int GROUP_VOICE_CHAN_GRANT_UPDATE_EXPLICIT = 0x03;
+  public static final int UNIT_REGISTRATION_RESPONSE             = 0x2C;
+  public static final int ID_UPDATE_VUHF                         = 0x34;
+  public static final int SYSTEM_SERVICE_BROADCAST               = 0x38;
+  public static final int SECONDARY_CONTROL_BROADCAST            = 0x39;
+  public static final int RFSS_STATUS_BROADCAST                  = 0x3A;
+  public static final int NETWORK_STATUS                         = 0x3B;
+  public static final int ADJACENT_STATUS_BROADCAST              = 0x3C;
+  public static final int ID_UPDATE_NO_VUHF                      = 0x3D;
 
   protected final int opCode;
 

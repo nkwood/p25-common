@@ -39,6 +39,9 @@ public class TrunkSignalBlockFactory {
       case TrunkSignalBlock.GROUP_VOICE_CHAN_GRANT:
         return new GroupVoiceChannelGrant(intBytes12);
 
+      case TrunkSignalBlock.GROUP_VOICE_CHAN_GRANT_UPDATE_EXPLICIT:
+        return new GroupVoiceChannelGrantUpdateExplicit(intBytes12);
+
       case TrunkSignalBlock.ID_UPDATE_VUHF:
         return new IdUpdateVuhf(intBytes12);
 
