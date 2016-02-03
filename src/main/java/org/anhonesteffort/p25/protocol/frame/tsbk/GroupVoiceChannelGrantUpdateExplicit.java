@@ -68,4 +68,15 @@ public class GroupVoiceChannelGrantUpdateExplicit
     return idBlock.getBaseFreq() + (transmitNumber * idBlock.getChannelSpacing());
   }
 
+  @Override
+  public String toString() {
+    return super.toString()       + ", " +
+        "txId: " + transmitId     + ", " +
+        "txN: "  + transmitNumber + ", " +
+        "rxId: " + receiveId      + ", " +
+        "rxN: "  + receiveNumber  + ", " +
+        "gId: "  + groupId        + ", " +
+        "sId: "  + sourceId;
+  }
+
 }
