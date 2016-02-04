@@ -26,7 +26,6 @@ public class GroupVoiceChannelGrantUpdateExplicit
   private final int receiveId;
   private final int receiveNumber;
   private final int groupId;
-  private final int sourceId;
 
   public GroupVoiceChannelGrantUpdateExplicit(int[] bytes12) {
     super(bytes12);
@@ -36,7 +35,6 @@ public class GroupVoiceChannelGrantUpdateExplicit
     receiveId      = (bytes12[6] & 0xF0) >> 4;
     receiveNumber  = ((bytes12[6] & 0x0F) << 8) + bytes12[7];
     groupId        = (bytes12[8] << 8)  + bytes12[9];
-    sourceId       = 0xFFFF;
   }
 
   public int getTransmitId() {
@@ -59,10 +57,6 @@ public class GroupVoiceChannelGrantUpdateExplicit
     return groupId;
   }
 
-  public int getSourceId() {
-    return sourceId;
-  }
-
   @Override
   public double getDownlinkFreq(IdUpdateBlock idBlock) {
     return idBlock.getBaseFreq() + (transmitNumber * idBlock.getChannelSpacing());
@@ -75,8 +69,7 @@ public class GroupVoiceChannelGrantUpdateExplicit
         "txN: "  + transmitNumber + ", " +
         "rxId: " + receiveId      + ", " +
         "rxN: "  + receiveNumber  + ", " +
-        "gId: "  + groupId        + ", " +
-        "sId: "  + sourceId;
+        "gId: "  + groupId;
   }
 
 }

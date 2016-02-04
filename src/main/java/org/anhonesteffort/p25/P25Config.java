@@ -40,6 +40,9 @@ public class P25Config {
 
   public static final int NID_LENGTH = 64;
 
+  public static final int UNIT_ID_NONE = 0x000000;
+  public static final int UNIT_ID_ALL  = 0xFFFFFF;
+
   private final Long    maxRateDiff;
   private final Long    passbandStop;
   private final Long    stopbandStart;
