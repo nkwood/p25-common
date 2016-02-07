@@ -162,12 +162,17 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   public Void call() {
     try {
 
-      Stream.generate(this).forEach(samples -> samples.forEach(freqTranslation::consume));
+      Stream.generate(this).forEach(samples -> {
+        samples.forEach(freqTranslation::consume);
 
-    } catch (StreamInterruptedException e) {
-      log.debug(spec + " interrupted, assuming execution was canceled");
+        if (Thread.currentThread().isInterrupted()) {
+          throw new StreamInterruptedException("interrupted in consumer loop");
+        }
+      });
+
     } finally {
       iqSampleQueue.clear();
+      log.debug(spec + " interrupted, assuming execution was canceled");
     }
 
     return null;
