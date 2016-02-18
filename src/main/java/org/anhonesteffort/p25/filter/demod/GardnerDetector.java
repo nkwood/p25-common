@@ -97,8 +97,8 @@ public class GardnerDetector extends Filter<ComplexNumber> {
         return;
       }
 
-      ComplexNumber middleSymbol  = middleSample.multiply(priorMiddleSample.conjugate()).normalize();
-      ComplexNumber currentSymbol = currentSample.multiply(priorSample.conjugate()).normalize();
+      ComplexNumber middleSymbol  = middleSample.copy().multiply(priorMiddleSample.conjugate()).normalize();
+      ComplexNumber currentSymbol = currentSample.copy().multiply(priorSample.conjugate()).normalize();
 
       float inPhaseError    = (priorSymbol.getInPhase()    - currentSymbol.getInPhase())    * middleSymbol.getInPhase();
       float quadratureError = (priorSymbol.getQuadrature() - currentSymbol.getQuadrature()) * middleSymbol.getQuadrature();
@@ -113,7 +113,7 @@ public class GardnerDetector extends Filter<ComplexNumber> {
       priorSample       = currentSample;
       priorSymbol       = currentSymbol;
 
-      GardnerDetector.this.broadcast(currentSymbol);
+      GardnerDetector.this.broadcast(currentSymbol.copy());
     }
   }
 }

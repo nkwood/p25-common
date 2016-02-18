@@ -54,6 +54,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   private final P25ChannelSpec spec;
   private final LinkedBlockingQueue<ComplexNumber[]> iqSampleQueue;
 
+  // todo: CAS
   private volatile Filter<ComplexNumber> freqTranslation = new NoOpComplexNumberFilter();
   private volatile DataUnitFramer        framer          = new DataUnitFramer(Optional.empty());
 
