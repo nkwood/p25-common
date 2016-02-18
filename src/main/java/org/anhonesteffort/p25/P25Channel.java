@@ -27,7 +27,7 @@ import org.anhonesteffort.dsp.filter.Filter;
 import org.anhonesteffort.dsp.filter.FilterFactory;
 import org.anhonesteffort.dsp.filter.NoOpComplexNumberFilter;
 import org.anhonesteffort.dsp.filter.rate.RateChangeFilter;
-import org.anhonesteffort.dsp.sample.DynamicSink;
+import org.anhonesteffort.dsp.DynamicSink;
 import org.anhonesteffort.dsp.sample.Samples;
 import org.anhonesteffort.p25.filter.decode.QpskPolarSlicer;
 import org.anhonesteffort.p25.filter.demod.ComplexNumberCqpskDemodulator;
@@ -36,7 +36,6 @@ import org.anhonesteffort.p25.protocol.DataUnitFramer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -53,7 +52,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
 
   private final P25Config config;
   private final P25ChannelSpec spec;
-  private final LinkedBlockingQueue<FloatBuffer> iqSampleQueue;
+  private final LinkedBlockingQueue<ComplexNumber[]> iqSampleQueue;
 
   private volatile Filter<ComplexNumber> freqTranslation = new NoOpComplexNumberFilter();
   private volatile DataUnitFramer        framer          = new DataUnitFramer(Optional.empty());
@@ -147,10 +146,9 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   public List<ComplexNumber> get() {
     try {
 
-      FloatBuffer iqSamples = iqSampleQueue.take();
-      return IntStream.range(0, iqSamples.limit())
-                      .filter(i -> ((i & 1) == 0) && (i + 1) < iqSamples.limit())
-                      .mapToObj(i -> new ComplexNumber(iqSamples.get(i), iqSamples.get(i + 1)))
+      ComplexNumber[] iqSamples = iqSampleQueue.take();
+      return IntStream.range(0, iqSamples.length)
+                      .mapToObj(i -> iqSamples[i])
                       .collect(Collectors.toList());
 
     } catch (InterruptedException e) {
