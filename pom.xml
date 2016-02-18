@@ -25,7 +25,7 @@
 
     <groupId>org.anhonesteffort.p25</groupId>
     <artifactId>p25-common</artifactId>
-    <version>0.3.6</version>
+    <version>0.3.0</version>
 
     <repositories>
         <repository>
@@ -50,7 +50,7 @@
         <dependency>
             <groupId>org.anhonesteffort.dsp</groupId>
             <artifactId>dsp-common</artifactId>
-            <version>0.2.1</version>
+            <version>0.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.anhonesteffort.jmbe</groupId>
