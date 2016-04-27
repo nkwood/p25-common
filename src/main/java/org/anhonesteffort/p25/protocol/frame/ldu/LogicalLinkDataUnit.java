@@ -15,11 +15,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame;
+package org.anhonesteffort.p25.protocol.frame.ldu;
 
 import org.anhonesteffort.dsp.util.Util;
 import org.anhonesteffort.p25.ecc.Hamming_10_6_3;
 import org.anhonesteffort.p25.protocol.Nid;
+import org.anhonesteffort.p25.protocol.frame.DataUnit;
 
 import java.nio.ByteBuffer;
 import java.util.BitSet;

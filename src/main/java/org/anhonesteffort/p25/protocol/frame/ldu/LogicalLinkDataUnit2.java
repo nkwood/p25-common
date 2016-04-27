@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame;
+package org.anhonesteffort.p25.protocol.frame.ldu;
 
 import org.anhonesteffort.p25.ecc.ReedSolomon_24_16_9;
 import org.anhonesteffort.p25.protocol.Nid;
