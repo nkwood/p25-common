@@ -33,7 +33,7 @@ public class VoiceCodeWordFactory {
   private BitSet bytesToBitSet(byte[] bytes) {
     BitSet bitSet = new BitSet(bytes.length * 8);
 
-    IntStream.range(0, bitSet.size())
+    IntStream.range(0, bytes.length * 8)
              .filter(bit -> Util.bytesToInt(bytes, bit, 1) == 1)
              .forEach(bitSet::set);
 
