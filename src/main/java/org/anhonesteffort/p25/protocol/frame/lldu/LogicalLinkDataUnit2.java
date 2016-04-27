@@ -41,15 +41,15 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
     intact           = rsResult >= 0;
   }
 
-  protected LogicalLinkDataUnit2(Nid          nid,
-                                 ByteBuffer   buffer,
-                                 VoiceFrame[] voiceFrames,
-                                 byte[]       messageIndicator,
-                                 int          algorithmId,
-                                 int          keyId,
-                                 boolean      intact)
+  protected LogicalLinkDataUnit2(Nid             nid,
+                                 ByteBuffer      buffer,
+                                 VoiceCodeWord[] voiceCodeWords,
+                                 byte[]          messageIndicator,
+                                 int             algorithmId,
+                                 int             keyId,
+                                 boolean         intact)
   {
-    super(nid, buffer, voiceFrames);
+    super(nid, buffer, voiceCodeWords);
 
     this.messageIndicator = messageIndicator;
     this.algorithmId      = algorithmId;
@@ -77,7 +77,7 @@ public class LogicalLinkDataUnit2 extends LogicalLinkDataUnit {
   @Override
   public LogicalLinkDataUnit2 copy() {
     return new LogicalLinkDataUnit2(
-        nid, copyBuffer(), voiceFrames, messageIndicator, algorithmId, keyId, intact
+        nid, copyBuffer(), voiceCodeWords, messageIndicator, algorithmId, keyId, intact
     );
   }
 

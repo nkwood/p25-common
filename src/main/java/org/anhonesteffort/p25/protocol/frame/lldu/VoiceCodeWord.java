@@ -21,11 +21,11 @@ import org.anhonesteffort.dsp.Copyable;
 
 import java.util.Arrays;
 
-public class VoiceFrame implements Copyable<VoiceFrame> {
+public class VoiceCodeWord implements Copyable<VoiceCodeWord> {
 
   private final byte[] bytes;
 
-  public VoiceFrame(byte[] bytes) {
+  public VoiceCodeWord(byte[] bytes) {
     this.bytes = bytes;
   }
 
@@ -34,8 +34,8 @@ public class VoiceFrame implements Copyable<VoiceFrame> {
   }
 
   @Override
-  public VoiceFrame copy() {
-    return new VoiceFrame(Arrays.copyOf(bytes, bytes.length));
+  public VoiceCodeWord copy() {
+    return new VoiceCodeWord(Arrays.copyOf(bytes, bytes.length));
   }
 
 }

@@ -22,11 +22,11 @@ import org.anhonesteffort.dsp.util.Util;
 import java.util.BitSet;
 import java.util.stream.IntStream;
 
-public class VoiceFrameFactory {
+public class VoiceCodeWordFactory {
 
-  private static final int   VOICE_FRAME_COUNT   = 9;
-  private static final int   VOICE_FRAME_LENGTH  = 144;
-  private static final int[] VOICE_FRAME_INDEXES = new int[] {
+  private static final int   VOICE_CW_COUNT   =   9;
+  private static final int   VOICE_CW_LENGTH  = 144;
+  private static final int[] VOICE_CW_INDEXES = new int[] {
       0, 144, 328, 512, 696, 880, 1064, 1248, 1424
   };
 
@@ -40,18 +40,18 @@ public class VoiceFrameFactory {
     return bitSet;
   }
 
-  public VoiceFrame[] framesFor(byte[] llduBytes) {
-    BitSet       llduBits   = bytesToBitSet(llduBytes);
-    VoiceFrame[] frames     = new VoiceFrame[VOICE_FRAME_COUNT];
-    int          frameCount = 0;
+  public VoiceCodeWord[] wordsFor(byte[] llduBytes) {
+    BitSet          llduBits  = bytesToBitSet(llduBytes);
+    VoiceCodeWord[] words     = new VoiceCodeWord[VOICE_CW_COUNT];
+    int             wordCount = 0;
 
-    for (int bitIndex : VOICE_FRAME_INDEXES) {
-      frames[frameCount++] = new VoiceFrame(
-          llduBits.get(bitIndex, bitIndex + VOICE_FRAME_LENGTH).toByteArray()
+    for (int bitIndex : VOICE_CW_INDEXES) {
+      words[wordCount++] = new VoiceCodeWord(
+          llduBits.get(bitIndex, bitIndex + VOICE_CW_LENGTH).toByteArray()
       );
     }
 
-    return frames;
+    return words;
   }
 
 }

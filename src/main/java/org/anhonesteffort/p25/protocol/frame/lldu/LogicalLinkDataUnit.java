@@ -26,8 +26,8 @@ import java.nio.ByteBuffer;
 
 public abstract class LogicalLinkDataUnit extends DataUnit {
 
-  protected final int[]        rsHexbits24;
-  protected final VoiceFrame[] voiceFrames;
+  protected final int[]           rsHexbits24;
+  protected final VoiceCodeWord[] voiceCodeWords;
 
   public LogicalLinkDataUnit(Nid nid, ByteBuffer buffer) {
     super(nid, buffer);
@@ -47,18 +47,18 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
       }
     }
 
-    voiceFrames = new VoiceFrameFactory().framesFor(bytes);
+    voiceCodeWords = new VoiceCodeWordFactory().wordsFor(bytes);
     // todo: parse low speed data
   }
 
-  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, VoiceFrame[] voiceFrames) {
+  protected LogicalLinkDataUnit(Nid nid, ByteBuffer buffer, VoiceCodeWord[] voiceCodeWords) {
     super(nid, buffer);
-    this.rsHexbits24 = null;
-    this.voiceFrames = voiceFrames;
+    this.rsHexbits24    = null;
+    this.voiceCodeWords = voiceCodeWords;
   }
 
-  public VoiceFrame[] getVoiceFrames() {
-    return voiceFrames;
+  public VoiceCodeWord[] getVoiceCodeWords() {
+    return voiceCodeWords;
   }
 
 }

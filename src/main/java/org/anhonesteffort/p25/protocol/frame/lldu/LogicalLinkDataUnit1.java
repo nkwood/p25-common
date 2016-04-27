@@ -41,11 +41,11 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
 
   protected LogicalLinkDataUnit1(Nid             nid,
                                  ByteBuffer      buffer,
-                                 VoiceFrame[]    voiceFrames,
+                                 VoiceCodeWord[] voiceCodeWords,
                                  LinkControlWord linkControlWord,
                                  boolean         intact)
   {
-    super(nid, buffer, voiceFrames);
+    super(nid, buffer, voiceCodeWords);
 
     this.linkControlWord = linkControlWord;
     this.intact          = intact;
@@ -63,7 +63,7 @@ public class LogicalLinkDataUnit1 extends LogicalLinkDataUnit {
   @Override
   public LogicalLinkDataUnit1 copy() {
     return new LogicalLinkDataUnit1(
-        nid, copyBuffer(), voiceFrames, linkControlWord, intact
+        nid, copyBuffer(), voiceCodeWords, linkControlWord, intact
     );
   }
 
