@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package org.anhonesteffort.p25.protocol.frame.ldu;
+package org.anhonesteffort.p25.protocol.frame.lldu;
 
 import org.anhonesteffort.dsp.Copyable;
 

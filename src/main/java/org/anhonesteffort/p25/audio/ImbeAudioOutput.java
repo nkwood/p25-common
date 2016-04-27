@@ -21,8 +21,8 @@ import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.jmbe.iface.AudioConverter;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 import org.anhonesteffort.p25.protocol.Duid;
-import org.anhonesteffort.p25.protocol.frame.ldu.LogicalLinkDataUnit;
-import org.anhonesteffort.p25.protocol.frame.ldu.VoiceFrame;
+import org.anhonesteffort.p25.protocol.frame.lldu.LogicalLinkDataUnit;
+import org.anhonesteffort.p25.protocol.frame.lldu.VoiceFrame;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
