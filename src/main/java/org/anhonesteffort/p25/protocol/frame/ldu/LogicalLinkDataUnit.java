@@ -23,14 +23,8 @@ import org.anhonesteffort.p25.protocol.Nid;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 
 import java.nio.ByteBuffer;
-import java.util.BitSet;
-import java.util.stream.IntStream;
 
 public abstract class LogicalLinkDataUnit extends DataUnit {
-
-  private static final int[] VOICE_FRAME_INDEXES = new int[] {
-      0, 144, 328, 512, 696, 880, 1064, 1248, 1424
-  };
 
   protected final int[]        rsHexbits24;
   protected final VoiceFrame[] voiceFrames;
@@ -53,19 +47,7 @@ public abstract class LogicalLinkDataUnit extends DataUnit {
       }
     }
 
-    // todo: gross, BitSet.valueOf(?)
-    BitSet bitSet = new BitSet(bytes.length * 8);
-    IntStream.range(0, bytes.length * 8)
-             .filter(bit -> Util.bytesToInt(bytes, bit, 1) == 1)
-             .forEach(bitSet::set);
-
-    int voiceFrameCount = 0;
-        voiceFrames     = new VoiceFrame[9];
-
-    for (int bitIndex : VOICE_FRAME_INDEXES) {
-      voiceFrames[voiceFrameCount++] = new VoiceFrame(bitSet.get(bitIndex, bitIndex + 144).toByteArray());
-    }
-
+    voiceFrames = new VoiceFrameFactory().framesFor(bytes);
     // todo: parse low speed data
   }
 
