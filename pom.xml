@@ -115,7 +115,7 @@
                     <branch>refs/heads/mvn-repo</branch>
                     <includes><include>**/*</include></includes>
                     <repositoryName>p25-common</repositoryName>
-                    <repositoryOwner>rhodey</repositoryOwner>
+                    <repositoryOwner>radiowitness</repositoryOwner>
                 </configuration>
                 <executions>
                     <execution>
