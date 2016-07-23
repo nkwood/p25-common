@@ -1,6 +1,6 @@
 # p25-common
 
-common package for all my p25 stuff.
+common package for all the p25 dsp stuff.
 
 ## Configure (optional)
 Copy the file `example-p25.properties` to another file named `p25.properties`,
