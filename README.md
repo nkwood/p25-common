@@ -1,6 +1,6 @@
 # p25-common
 
-common package for all the p25 dsp stuff.
+P25 digital signal processing library.
 
 ## Configure (optional)
 Copy the file `example-p25.properties` to another file named `p25.properties`,
