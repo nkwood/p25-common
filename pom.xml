@@ -38,7 +38,7 @@
         </repository>
         <repository>
             <id>jmbe-mvn-repo</id>
-            <url>https://raw.github.com/rhodey/jmbe/mvn-repo/</url>
+            <url>https://raw.github.com/radiowitness/jmbe/mvn-repo/</url>
             <snapshots>
                 <updatePolicy>always</updatePolicy>
                 <enabled>true</enabled>
