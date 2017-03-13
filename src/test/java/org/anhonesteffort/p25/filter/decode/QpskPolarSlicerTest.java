@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.filter.decode;
 
-import org.anhonesteffort.dsp.ComplexNumber;
+import org.anhonesteffort.dsp.util.ComplexNumber;
 import org.anhonesteffort.p25.protocol.DiBit;
 import org.junit.Test;
 

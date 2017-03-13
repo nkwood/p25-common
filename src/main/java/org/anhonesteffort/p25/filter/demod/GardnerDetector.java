@@ -22,9 +22,9 @@
 
 package org.anhonesteffort.p25.filter.demod;
 
-import org.anhonesteffort.dsp.ComplexNumber;
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.dsp.filter.Filter;
+import org.anhonesteffort.dsp.util.ComplexNumber;
 import org.anhonesteffort.p25.filter.interpolate.ComplexNumberMmseInterpolatingFilter;
 
 public class GardnerDetector extends Filter<ComplexNumber> {

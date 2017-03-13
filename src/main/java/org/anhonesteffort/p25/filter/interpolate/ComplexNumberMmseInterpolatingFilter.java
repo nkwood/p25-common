@@ -20,8 +20,9 @@
 
 package org.anhonesteffort.p25.filter.interpolate;
 
-import org.anhonesteffort.dsp.ComplexNumber;
+
 import org.anhonesteffort.dsp.filter.Filter;
+import org.anhonesteffort.dsp.util.ComplexNumber;
 
 import java.util.stream.IntStream;
 

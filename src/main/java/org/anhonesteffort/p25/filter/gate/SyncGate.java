@@ -17,9 +17,9 @@
 
 package org.anhonesteffort.p25.filter.gate;
 
-import org.anhonesteffort.dsp.Copyable;
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.dsp.Source;
+import org.anhonesteffort.dsp.util.Copyable;
 
 public abstract class SyncGate<T extends Copyable<T>> extends Source<T, SyncGateSink<T>> implements Sink<T> {
 

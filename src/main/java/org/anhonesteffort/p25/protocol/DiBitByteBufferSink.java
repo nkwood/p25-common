@@ -17,8 +17,8 @@
 
 package org.anhonesteffort.p25.protocol;
 
-import org.anhonesteffort.dsp.Copyable;
 import org.anhonesteffort.dsp.Sink;
+import org.anhonesteffort.dsp.util.Copyable;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;

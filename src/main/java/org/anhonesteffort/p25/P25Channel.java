@@ -17,18 +17,18 @@
 
 package org.anhonesteffort.p25;
 
-import org.anhonesteffort.dsp.ComplexNumber;
-import org.anhonesteffort.dsp.ConcurrentSource;
 import org.anhonesteffort.dsp.Sink;
-import org.anhonesteffort.dsp.StreamInterruptedException;
+import org.anhonesteffort.dsp.Source;
+import org.anhonesteffort.dsp.StatefulSink;
 import org.anhonesteffort.dsp.filter.ComplexNumberFrequencyTranslatingFilter;
 import org.anhonesteffort.dsp.filter.ComplexNumberMovingGainControl;
 import org.anhonesteffort.dsp.filter.Filter;
 import org.anhonesteffort.dsp.filter.FilterFactory;
 import org.anhonesteffort.dsp.filter.NoOpComplexNumberFilter;
 import org.anhonesteffort.dsp.filter.rate.RateChangeFilter;
-import org.anhonesteffort.dsp.DynamicSink;
 import org.anhonesteffort.dsp.sample.Samples;
+import org.anhonesteffort.dsp.util.ComplexNumber;
+import org.anhonesteffort.dsp.util.StreamInterruptedException;
 import org.anhonesteffort.p25.filter.decode.QpskPolarSlicer;
 import org.anhonesteffort.p25.filter.demod.ComplexNumberCqpskDemodulator;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
@@ -38,14 +38,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.Callable;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
-    implements DynamicSink<Samples>, Supplier<List<ComplexNumber>>
+public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
+    implements StatefulSink<Samples>, Supplier<List<ComplexNumber>>, Callable<Void>
 {
 
   private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
@@ -96,7 +97,7 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   }
 
   @Override
-  public void onSourceStateChange(Long sampleRate, Double frequency) {
+  public void onStateChange(long sampleRate, double frequency) {
     Optional<RateChangeFilter<ComplexNumber>> resampling        = initResampling(sampleRate);
     Filter<ComplexNumber>                     baseband          = FilterFactory.getKaiserBessel(channelRate, config.getPassbandStop(), config.getStopbandStart(), config.getAttenuation(), 1f);
     Filter<ComplexNumber>                     gainControl       = new ComplexNumberMovingGainControl((int) (channelRate / P25Config.SYMBOL_RATE));
@@ -123,15 +124,13 @@ public class P25Channel extends ConcurrentSource<DataUnit, Sink<DataUnit>>
   }
 
   @Override
-  public void addSink(Sink<DataUnit> sink) {
-    super.addSink(sink);
-    framer.addSink(sink);
+  public boolean addSink(Sink<DataUnit> sink) {
+    return super.addSink(sink) && framer.addSink(sink);
   }
 
   @Override
-  public void removeSink(Sink<DataUnit> sink) {
-    super.removeSink(sink);
-    framer.removeSink(sink);
+  public boolean removeSink(Sink<DataUnit> sink) {
+    return super.removeSink(sink) && framer.removeSink(sink);
   }
 
   @Override

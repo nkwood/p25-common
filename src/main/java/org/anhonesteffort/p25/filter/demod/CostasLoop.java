@@ -22,8 +22,8 @@
 
 package org.anhonesteffort.p25.filter.demod;
 
-import org.anhonesteffort.dsp.ComplexNumber;
 import org.anhonesteffort.dsp.Sink;
+import org.anhonesteffort.dsp.util.ComplexNumber;
 
 public class CostasLoop implements Sink<ComplexNumber> {
 

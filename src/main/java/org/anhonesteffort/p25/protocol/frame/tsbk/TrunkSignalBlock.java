@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame.tsbk;
 
-import org.anhonesteffort.dsp.Copyable;
+import org.anhonesteffort.dsp.util.Copyable;
 
 public class TrunkSignalBlock implements Copyable<TrunkSignalBlock> {
 

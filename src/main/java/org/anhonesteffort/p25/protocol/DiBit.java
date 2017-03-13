@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol;
 
-import org.anhonesteffort.dsp.Copyable;
+import org.anhonesteffort.dsp.util.Copyable;
 
 public class DiBit implements Copyable<DiBit> {
 

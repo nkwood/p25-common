@@ -17,8 +17,8 @@
 
 package org.anhonesteffort.p25.util;
 
-import org.anhonesteffort.dsp.ChannelSpec;
 import org.anhonesteffort.dsp.Sink;
+import org.anhonesteffort.dsp.util.ChannelSpec;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
 import org.anhonesteffort.p25.protocol.Duid;
 import org.slf4j.Logger;

@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame;
 
-import org.anhonesteffort.dsp.Copyable;
+import org.anhonesteffort.dsp.util.Copyable;
 
 import java.util.Arrays;
 

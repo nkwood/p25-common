@@ -17,7 +17,7 @@
 
 package org.anhonesteffort.p25.protocol.frame.linkcontrol;
 
-import org.anhonesteffort.dsp.Copyable;
+import org.anhonesteffort.dsp.util.Copyable;
 
 public class LinkControlWord implements Copyable<LinkControlWord> {
 

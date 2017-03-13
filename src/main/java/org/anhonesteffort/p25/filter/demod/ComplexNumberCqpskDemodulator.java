@@ -17,9 +17,9 @@
 
 package org.anhonesteffort.p25.filter.demod;
 
-import org.anhonesteffort.dsp.ComplexNumber;
 import org.anhonesteffort.dsp.Sink;
 import org.anhonesteffort.dsp.filter.Filter;
+import org.anhonesteffort.dsp.util.ComplexNumber;
 
 public class ComplexNumberCqpskDemodulator extends Filter<ComplexNumber> {
 
@@ -43,13 +43,13 @@ public class ComplexNumberCqpskDemodulator extends Filter<ComplexNumber> {
   }
 
   @Override
-  public void addSink(Sink<ComplexNumber> sink) {
-    gardnerDetector.addSink(sink);
+  public boolean addSink(Sink<ComplexNumber> sink) {
+    return gardnerDetector.addSink(sink);
   }
 
   @Override
-  public void removeSink(Sink<ComplexNumber> sink) {
-    gardnerDetector.removeSink(sink);
+  public boolean removeSink(Sink<ComplexNumber> sink) {
+    return gardnerDetector.removeSink(sink);
   }
 
 }

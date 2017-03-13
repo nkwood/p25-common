@@ -17,8 +17,7 @@
 
 package org.anhonesteffort.p25;
 
-import org.anhonesteffort.dsp.ChannelSpec;
-import org.anhonesteffort.p25.P25Config;
+import org.anhonesteffort.dsp.util.ChannelSpec;
 
 public class P25ChannelSpec extends ChannelSpec {
 
