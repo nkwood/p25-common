@@ -29,14 +29,6 @@
 
     <repositories>
         <repository>
-            <id>dsp-common-mvn-repo</id>
-            <url>https://raw.github.com/radiowitness/dsp-common/mvn-repo/</url>
-            <snapshots>
-                <updatePolicy>always</updatePolicy>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
             <id>jmbe-mvn-repo</id>
             <url>https://raw.github.com/radiowitness/jmbe/mvn-repo/</url>
             <snapshots>
@@ -50,7 +42,7 @@
         <dependency>
             <groupId>org.anhonesteffort.dsp</groupId>
             <artifactId>dsp-common</artifactId>
-            <version>1.0</version>
+            <version>1.1</version>
         </dependency>
         <dependency>
             <groupId>org.anhonesteffort.jmbe</groupId>
@@ -70,18 +62,6 @@
         </dependency>
     </dependencies>
 
-    <properties>
-        <github.global.server>github</github.global.server>
-    </properties>
-
-    <distributionManagement>
-        <repository>
-            <id>internal.repo</id>
-            <name>Temporary Staging Repository</name>
-            <url>file://${project.build.directory}/mvn-repo</url>
-        </repository>
-    </distributionManagement>
-
     <build>
         <plugins>
             <plugin>
@@ -92,39 +72,6 @@
                     <source>1.8</source>
                     <target>1.8</target>
                 </configuration>
-            </plugin>
-
-            <plugin>
-                <artifactId>maven-deploy-plugin</artifactId>
-                <version>2.8.1</version>
-                <configuration>
-                    <altDeploymentRepository>
-                        internal.repo::default::file://${project.build.directory}/mvn-repo
-                    </altDeploymentRepository>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>com.github.github</groupId>
-                <artifactId>site-maven-plugin</artifactId>
-                <version>0.11</version>
-                <configuration>
-                    <message>artifacts for ${project.version}</message>
-                    <noJekyll>true</noJekyll>
-                    <outputDirectory>${project.build.directory}/mvn-repo</outputDirectory>
-                    <branch>refs/heads/mvn-repo</branch>
-                    <includes><include>**/*</include></includes>
-                    <repositoryName>p25-common</repositoryName>
-                    <repositoryOwner>radiowitness</repositoryOwner>
-                </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>site</goal>
-                        </goals>
-                        <phase>deploy</phase>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

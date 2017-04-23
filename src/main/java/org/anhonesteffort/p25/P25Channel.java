@@ -49,6 +49,7 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>> implements Stat
   private Long channelRate = -1l;
 
   public P25Channel(P25Config config, P25ChannelSpec spec) {
+    super(true);
     this.config = config;
     this.spec   = spec;
   }
