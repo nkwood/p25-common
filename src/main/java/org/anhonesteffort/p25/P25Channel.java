@@ -28,7 +28,6 @@ import org.anhonesteffort.dsp.filter.NoOpComplexNumberFilter;
 import org.anhonesteffort.dsp.filter.rate.RateChangeFilter;
 import org.anhonesteffort.dsp.sample.Samples;
 import org.anhonesteffort.dsp.util.ComplexNumber;
-import org.anhonesteffort.dsp.util.StreamInterruptedException;
 import org.anhonesteffort.p25.filter.decode.QpskPolarSlicer;
 import org.anhonesteffort.p25.filter.demod.ComplexNumberCqpskDemodulator;
 import org.anhonesteffort.p25.protocol.frame.DataUnit;
@@ -36,35 +35,22 @@ import org.anhonesteffort.p25.protocol.DataUnitFramer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.Callable;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
-
-public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
-    implements StatefulSink<Samples>, Supplier<List<ComplexNumber>>, Callable<Void>
-{
+public class P25Channel extends Source<DataUnit, Sink<DataUnit>> implements StatefulSink<Samples> {
 
   private static final Logger log = LoggerFactory.getLogger(P25Channel.class);
 
-  private final P25Config config;
+  private final P25Config      config;
   private final P25ChannelSpec spec;
-  private final LinkedBlockingQueue<ComplexNumber[]> iqSampleQueue;
 
-  // todo: CAS
-  private volatile Filter<ComplexNumber> freqTranslation = new NoOpComplexNumberFilter();
-  private volatile DataUnitFramer        framer          = new DataUnitFramer(Optional.empty());
+  private Filter<ComplexNumber> freqTranslation = new NoOpComplexNumberFilter();
+  private DataUnitFramer        framer          = new DataUnitFramer(Optional.empty());
 
   private Long channelRate = -1l;
 
-  public P25Channel(P25Config config, P25ChannelSpec spec, int sampleQueueSize) {
-    this.config   = config;
-    this.spec     = spec;
-    iqSampleQueue = new LinkedBlockingQueue<>(sampleQueueSize);
+  public P25Channel(P25Config config, P25ChannelSpec spec) {
+    this.config = config;
+    this.spec   = spec;
   }
 
   public P25ChannelSpec getSpec() {
@@ -120,7 +106,6 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
     slicer.addSink(framer);
 
     sinks.forEach(framer::addSink);
-    iqSampleQueue.clear();
   }
 
   @Override
@@ -135,45 +120,9 @@ public class P25Channel extends Source<DataUnit, Sink<DataUnit>>
 
   @Override
   public void consume(Samples samples) {
-    if (!iqSampleQueue.offer(samples.getSamples())) {
-      iqSampleQueue.clear();
-      iqSampleQueue.offer(samples.getSamples());
-      log.error(spec + " sample queue for channel has overflowed");
+    for (ComplexNumber sample : samples.getSamples()) {
+      freqTranslation.consume(sample);
     }
-  }
-
-  @Override
-  public List<ComplexNumber> get() {
-    try {
-
-      ComplexNumber[] iqSamples = iqSampleQueue.take();
-      return IntStream.range(0, iqSamples.length)
-                      .mapToObj(i -> iqSamples[i])
-                      .collect(Collectors.toList());
-
-    } catch (InterruptedException e) {
-      throw new StreamInterruptedException("interrupted while supplying ComplexNumber stream", e);
-    }
-  }
-
-  @Override
-  public Void call() {
-    try {
-
-      Stream.generate(this).forEach(samples -> {
-        samples.forEach(freqTranslation::consume);
-
-        if (Thread.currentThread().isInterrupted()) {
-          throw new StreamInterruptedException("interrupted in consumer loop");
-        }
-      });
-
-    } finally {
-      iqSampleQueue.clear();
-      log.debug(spec + " interrupted, assuming execution was canceled");
-    }
-
-    return null;
   }
 
 }
